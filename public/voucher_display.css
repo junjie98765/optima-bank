@@ -1,0 +1,251 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #4CAF50;  /* Standard green for header */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    align-items: center;
+}
+
+.menu-btn {
+    font-size: 28px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.reward-balance {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.reward-balance span {
+    font-size: 16px;
+}
+
+.bell, .cart {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+main {
+    padding: 20px;
+}
+
+.reward-points {
+    text-align: center;
+}
+
+.reward-points h2 {
+    color: #333;  /* Standard dark grey for titles */
+    font-size: 30px;
+}
+
+.points-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #ddd;  /* Light grey background for progress bar */
+    border-radius: 10px;
+    position: relative;
+    margin: 20px 0;
+}
+
+.points-progress {
+    height: 100%;
+    background-color: #4CAF50;  /* Green color for progress */
+    border-radius: 10px;
+}
+
+.points-bar span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+}
+
+.categories {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.category-btn {
+    padding: 10px 20px;
+    background-color: #007BFF;  /* Standard blue for buttons */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.category-btn:hover {
+    background-color: #0056b3;  /* Darker blue on hover */
+}
+
+.voucher-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.voucher-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid #ddd;  /* Light border for vouchers */
+}
+
+.voucher-item p {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.voucher-item span {
+    display: block;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.expiry {
+    font-size: 14px;
+    color: #888;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.redeem-btn {
+    background-color: #28a745;  /* Green for Redeem button */
+    color: white;
+    margin-top: 10px;
+}
+
+.redeem-btn:hover {
+    background-color: #218838;  /* Darker green on hover */
+}
+
+.cart-btn {
+    background-color: #ffc107;  /* Yellow for Add to Cart button */
+    color: white;
+    margin-top: 10px;
+}
+
+.cart-btn:hover {
+    background-color: #e0a800;  /* Darker yellow on hover */
+}
+/* Styling for the search bar */
+.search-bar {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#couponSearch {
+    width: 50%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+/* Styling for the cart section */
+.cart-container {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;  /* Hidden by default */
+}
+
+.cart-item {
+    margin-bottom: 10px;
+}
+
+.cart-container button {
+    margin-top: 20px;
+    background-color: #ff5722;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cart-container button:hover {
+    background-color: #e64a19;
+}
+
+
+/* Styling for Cart Section */
+.cart-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    width: 250px;
+    display: none; /* Hidden by default */
+}
+
+.cart-section h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.cart-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+.cart-section li {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.cart-section button {
+    background-color: #FF5722;  /* Red color for clear cart */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.cart-section button:hover {
+    background-color: #e64a19;  /* Darker red on hover */
+}

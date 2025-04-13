@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voucher Details</title>
+    <link rel="stylesheet" href="/static/redeem.css"> <!-- Ensure this is the correct path to your CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 id="voucherTitle">Voucher Title</h2>
+        <!-- <img id="voucherImage" src="/placeholder.svg" alt="Voucher Image" class="voucher-img"> -->
+        <p id="voucherDescription">Description of the voucher.</p>
+        <p><strong>Points:</strong> <span id="voucherPoints"></span></p>
+        <p id="voucherValidity"></p>
+        <!-- <a href="terms&condition.html" class="btn btn-primary mt-3">Terms & Conditions</a> -->
+        <p><strong>Terms & Conditions:</strong> <span id="voucherTerms"></span></p>
+
+        <!-- Quantity Selector -->
+        <div class="quantity-selector">
+            <p><strong>Quantity:</strong></p>
+            <div class="quantity-controls">
+                <button id="decreaseBtn" class="quantity-btn"><i class="fas fa-minus"></i></button>
+                <input type="number" id="quantityInput" value="1" min="1" class="quantity-input">
+                <button id="increaseBtn" class="quantity-btn"><i class="fas fa-plus"></i></button>
+            </div>
+            <p class="total-points">Total Points: <span id="totalPoints"></span></p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button id="addToCartBtn" class="btn btn-success">Add to Cart</button>
+            <a href="/static/voucher_display.html" class="btn btn-primary">Back to Voucher List</a>
+        </div>
+    </div>
+
+    <script>
+        // Get voucher details from URL query parameters
+        const params = new URLSearchParams(window.location.search);
+        const voucherName = params.get('name');
+        const voucherPoints = parseInt(params.get('points')) || 0;
+        const voucherDescription = params.get('description');
+        //const voucherImage = params.get('image');
+        const voucherValidity = params.get('validity');
+        const voucherTerms = params.get('terms');
+
+        // Set the content of the page dynamically
+        document.getElementById('voucherTitle').textContent = voucherName;
+        document.getElementById('voucherPoints').textContent = voucherPoints;
+        document.getElementById('voucherDescription').textContent = voucherDescription;
+        //document.getElementById('voucherImage').src = voucherImage;
+        document.getElementById('voucherValidity').textContent = "Validity: " + voucherValidity;
+        document.getElementById('voucherTerms').textContent = voucherTerms;
+
+        // Quantity selector functionality
+        const quantityInput = document.getElementById('quantityInput');
+        const decreaseBtn = document.getElementById('decreaseBtn');
+        const increaseBtn = document.getElementById('increaseBtn');
+        const totalPointsElement = document.getElementById('totalPoints');
+        const addToCartBtn = document.getElementById('addToCartBtn');
+
+        // Initialize total points
+        updateTotalPoints();
+
+        // Event listeners for quantity buttons
+        decreaseBtn.addEventListener('click', () => {
+            const currentValue = parseInt(quantityInput.value) || 0;
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+                updateTotalPoints();
+            }
+        });
+
+        increaseBtn.addEventListener('click', () => {
+            const currentValue = parseInt(quantityInput.value) || 0;
+            quantityInput.value = currentValue + 1;
+            updateTotalPoints();
+        });
+
+        // Update total when quantity is manually changed
+        quantityInput.addEventListener('change', () => {
+            // Ensure minimum value is 1
+            if (parseInt(quantityInput.value) < 1 || isNaN(parseInt(quantityInput.value))) {
+                quantityInput.value = 1;
+            }
+            updateTotalPoints();
+        });
+
+        // Calculate and update total points
+        function updateTotalPoints() {
+            const quantity = parseInt(quantityInput.value) || 1;
+            const total = quantity * voucherPoints;
+            totalPointsElement.textContent = total;
+        }
+
+        // Add to cart functionality
+        addToCartBtn.addEventListener('click', () => {
+            const quantity = parseInt(quantityInput.value) || 1;
+            
+            // Get existing cart or initialize empty array
+            const cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
+            
+            // Check if this voucher is already in the cart
+            const existingVoucherIndex = cart.findIndex(item => item.name === voucherName);
+            
+            if (existingVoucherIndex !== -1) {
+                // Update quantity if voucher already exists
+                cart[existingVoucherIndex].quantity += quantity;
+            } else {
+                // Add new voucher to cart
+                cart.push({
+                    name: voucherName,
+                    points: voucherPoints,
+                    quantity: quantity,
+                    description: voucherDescription,
+                    validity: voucherValidity,
+                    terms: voucherTerms
+                });
+            }
+            
+            // Save updated cart to localStorage
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            
+            // Show confirmation and reset quantity
+            alert(`Added ${quantity} ${voucherName} voucher(s) to your cart!`);
+            quantityInput.value = 1;
+            updateTotalPoints();
+        });
+    </script>
+</body>
+</html>

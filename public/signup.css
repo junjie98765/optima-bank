@@ -1,0 +1,345 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    /* background: linear-gradient(to right, #0f2027, #203a43, #2c5364); */
+    font-family: 'Poppins', sans-serif;
+    background: url(image/pngtree-gray-gradient-background-is-simple-and-soft-image_15524345.png);
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+}
+
+
+.navbar{
+    /* width: 1200px;
+    height: 75px;
+    margin: auto; */
+
+    display: flex;
+    padding: 22px 0;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+
+.icon{
+    width: 200px;
+    float: left;
+    height: 70px;
+}
+
+.logo {
+    color: #ff7200;
+    font-size: 35px;
+    font-family: Arial;
+    padding-left: 10px;
+    padding-right: 250px;
+    display: flex;  /* Flexbox enables side-by-side alignment */
+    padding-top: 10px;
+    margin-top: 20px;
+}
+
+.logo span {
+    margin-right: 10px;  /* Adds space between 'Optimal' and 'Bank' */
+}
+
+
+.logo2{
+    margin-top: 20px;
+    width: 120px;
+    cursor: pointer;
+}
+
+.menu{
+    width: 400px;
+    float: right;
+    height: 70px;
+}
+
+ul{
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+ul li{
+    list-style: none;
+    margin-left: 62px;
+    margin-top: 27px;
+    font-size: 14px;
+}
+
+ul li a{
+    text-decoration: none;
+    color: #350053;
+    font-family: Arial;
+    font-weight: bold;
+    transition: 0.4s ease-in-out;
+    position: relative;
+}
+
+
+ul li a::after{
+    content:'';
+    height: 3px;
+    width: 0;
+    background: #ff7200;
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    transition: 0.5s;
+}
+
+
+ul li a:hover::after{
+    width: 100%;
+}
+
+#form {
+    width: 300px;
+    margin: 20vh auto 0 auto;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.8)50%,rgba(255, 255, 255, 0.8)50%);
+    border-radius: 4px;
+    font-size: 12px;
+
+    margin-top:20px;
+}
+
+#form h1 {
+    margin-bottom: 30px;
+    color: #ff7200;
+    text-align: center;
+}
+
+#form button {
+    padding: 10px;
+    margin-top: 10px;
+    width: 100%;
+    color: white;
+    /* background-color: #ff7200; */
+    border: none;
+    border-radius: 4px;
+}
+
+.button-submit .btn-submit{
+    background-color: #ff7200
+}
+
+.input-control {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-control input {
+    border: 2px solid #000000;
+	border-radius: 4px;
+	display: block;
+	font-size: 12px;
+	padding: 10px;
+	width: 100%;
+}
+
+.input-control label{
+    color: #000000;
+
+}
+
+.input-control input:focus {
+    outline: 0;
+}
+
+.input-control.success input {
+    border-color: #09c372;
+}
+
+.input-control.error input {
+    border-color: #ff3860;
+}
+
+.input-control .error {
+    color: #ff3860;
+    font-size: 9px;
+    height: 13px;
+}
+
+.acc{
+    margin-top:10px;
+    color: #000000;
+}
+
+.link{
+    color: #ff7200;
+    cursor: pointer;
+    font-size: 15px;
+
+   
+}
+
+.loginpage {
+    text-align: center;
+}
+
+.option-text{
+    position: relative;
+}
+ /* .option-text hr{
+    margin-top:20px;
+    height: 2px;
+    background-color:#000000; ;
+} */
+.option-text p{ 
+    position: absolute;
+    display: inline-block;
+    text-align: center;
+    top:-20px;
+    left:50%;
+    color: #000000;
+    transform: translate(-50%);
+    /* background: linear-gradient(to top, rgba(255, 255, 255, 0.8)50%,rgba(255, 255, 255, 0.8)50%); */
+    padding: 0px 5px;
+} 
+.line{
+    position: relative;
+    margin-top:20px;
+    height:1px;
+    width: 32%;
+    background-color: #000000;
+    top:-9px;
+}
+
+.line2 {
+    display: block;
+    height: 1px;
+    width: 32%;
+    background-color: #000000;
+    margin-top: -10px;
+    float: right;
+}
+/* 
+.button-google img{
+    width: 40px;
+    height: 40px;
+    object-fit:cover;
+}
+
+
+.button-google .btn-google{
+    display: flex;
+    width: 100%;
+    gap: 0.81rem;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.75rem 0;
+    align-items: center;
+    justify-content: center;
+    background: #f9f8ff;
+    border: 1px solid #d5cbff;
+    height:35px;
+    transition: 0.5s ease;
+    font-weight: 500;
+}
+
+.button-google .btn-google:hover{
+    background: #ff7200;
+    border-color: #f5f4f7;
+}
+
+.button-google .btn-google .social-icon{
+ width: 23px;
+
+}
+
+.button-google .btn-google p{
+    color: #000000;
+    font-size: 14px;
+} */
+
+/* Responsive adjustments for smaller screens */
+@media screen and (max-width: 768px) {
+
+    
+
+    .icon {
+        width: 150px; /* Adjust logo size for mobile */
+        height: 50px;
+    }
+
+    .logo {
+        font-size: 30px;
+        padding-right: 0;
+        padding-left: 10px;
+        display: block; /* Center the logo */
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .logo2 {
+        width: 100px; /* Adjust logo2 size */
+        cursor: pointer;
+        margin-top: 10px;
+        display: block; /* Center the logo2 */
+    }
+
+    .menu {
+        width: 100%; /* Menu takes up full width */
+        margin-top: 20px;
+    }
+
+    ul {
+        flex-direction: column; /* Stack the menu items vertically */
+        align-items: center; /* Center items */
+        width: 100%;
+    }
+
+    ul li {
+        margin-left: 0;
+        margin-top: 15px;
+        font-size: 16px; /* Adjust font size */
+    }
+
+    ul li a {
+        font-size: 16px; /* Adjust font size for mobile */
+        margin-left: 0;
+    }
+
+    /* Center the registration form */
+    .registration-form {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .registration-form input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .registration-form button {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff7200;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .registration-form button:hover {
+        background-color: #e86000;
+    }
+}

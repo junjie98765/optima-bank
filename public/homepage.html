@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+    <h1>Welcome to your profile</h1>
+    <p>Hello, <span id="username"></span></p>
+
+    <script>
+        // Retrieve the username from localStorage
+        var username = localStorage.getItem('username');
+        document.getElementById("username").innerText = username;
+    </script>
+</body>
+</html>

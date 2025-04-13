@@ -1,0 +1,74 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>Your Voucher Cart</h2>
+    <ul id="cartList" class="list-group mt-3"></ul>
+    <button class="btn btn-danger mt-3" onclick="clearCart()">Clear Cart</button>
+    <a href="/static/voucher_display.html" class="btn btn-primary mt-3">Back to Voucher List</a>
+  </div>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
+    const cartList = document.getElementById("cartList");
+
+    if (cart.length === 0) {
+      cartList.innerHTML = "<li class='list-group-item'>Your cart is empty.</li>";
+    } else {
+      cart.forEach((voucher) => {
+        const li = document.createElement("li");
+        li.className = "list-group-item d-flex justify-content-between align-items-center";
+        li.textContent = `${voucher.name} - ${voucher.points} points`;
+        cartList.appendChild(li);
+      });
+    }
+
+    function clearCart() {
+      localStorage.removeItem("voucherCart");
+      location.reload();
+    }
+  </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Your Voucher Cart</h2>
+        <ul id="cartList" class="list-group mt-3"></ul>
+        <button class="btn btn-danger mt-3" onclick="clearCart()">Clear Cart</button>
+        <a href="/static/voucher_display.html" class="btn btn-primary mt-3">Back to Voucher List</a>
+    </div>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
+        const cartList = document.getElementById("cartList");
+
+        if (cart.length === 0) {
+            cartList.innerHTML = "<li class='list-group-item'>Your cart is empty.</li>";
+        } else {
+            cart.forEach((voucher) => {
+                const li = document.createElement("li");
+                li.className = "list-group-item d-flex justify-content-between align-items-center";
+                li.textContent = `${voucher.name} - ${voucher.points} points`;
+                cartList.appendChild(li);
+            });
+        }
+
+        function clearCart() {
+            localStorage.removeItem("voucherCart");
+            location.reload();
+        }
+    </script>
+</body>
+</html>

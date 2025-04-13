@@ -1,0 +1,84 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="signup.css">
+    <script defer src="js/form.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script> 
+    <script defer src="js/google.js"></script> <!-- External JS File -->
+</head>
+<body>
+    <div class="navbar">
+        <div class="icon">
+            <img src="image/optima-bank_logo.png" class="logo2">
+        </div>
+
+        <div class="menu">
+            <ul>
+                <li><a href="signin.html">HOME</a></li>
+                <li><a href="About.html">ABOUT</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+            </ul>
+        </div>
+    </div> 
+
+
+    <div class="container">
+        <form id="form" action="/">
+            <h1>Sign Up Here</h1>
+            <div class="input-control">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text">
+                <div class="error"></div>
+            </div>
+            <div class="input-control">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="text">
+                <div class="error"></div>
+            </div>
+
+            <div class="input-control">
+                <label for="ph">Phone Number (Enter without '-' )</label>
+                <input id="phonenumber" name="phone" type="tel">
+                <div class="error"></div>
+            </div>
+
+            <div class="input-control">
+                <label for="password">Password</label>
+                <input id="password"name="password" type="password">
+                <div class="error"></div>
+            </div>
+            <div class="input-control">
+                <label for="password2">Password again</label>
+                <input id="password2"name="password2" type="password">
+                <div class="error"></div>
+            </div>
+            <div class="button-submit">
+            <button class="btn-submit" type="submit">Sign Up</button>
+            </div>
+            <div class="loginpage">
+            <p class="acc">Already have an account? <a class=link onclick="location.href='signin.html'">Login </a></p>
+            </div>
+            <div class="line"></div>
+            
+            <div class="option-text "><p>or sign in with</p>
+            </div>     <div class="line2"></div>
+            <!-- <div class="button-google">
+            <button class="btn-google">
+                    <img src="image/Google_Icons-09-512.webp" alt="google" className="social-icon">
+                    <p> Sign In </p>
+            </button>
+        </div> -->
+        <div class="button-google">
+            <div id="google-signin-button"></div> <!-- Google Sign-In Button -->
+        </div>
+        
+        </form>
+    </div>
+</body>
+</html>

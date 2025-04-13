@@ -1,0 +1,331 @@
+/*login Page*/
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.main{
+    width: 100%;
+    background:url(image/pngtree-gray-gradient-background-is-simple-and-soft-image_15524345.png);
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+}
+
+.navbar{
+    /* width: 1200px;
+    height: 75px;
+    margin: auto; */
+
+    display: flex;
+    padding: 22px 0;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+
+.icon{
+    width: 200px;
+    float: left;
+    height: 70px;
+}
+
+.logo{
+    color: #ff7200;
+    font-size: 35px;
+    font-family: Arial;
+    padding-left: 10px;
+    padding-right: 250px;
+    display: flex;  /* Flexbox enables side-by-side alignment */
+    padding-top: 10px;
+    margin-top: 20px;
+}
+
+.logo span {
+    margin-right: 10px;  /* Adds space between 'Optimal' and 'Bank' */
+}
+
+
+.logo2/*login Page*/
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.main{
+    width: 100%;
+    /* background: linear-gradient(to top, rgba(0,0,0,0.5)50%,rgba(0,0,0,0.5)50%), url(image/purple-gradient-background_322958-697.avif); */
+     background: url(image/pngtree-gray-gradient-background-is-simple-and-soft-image_15524345.png);
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+}
+
+.navbar{
+    /* width: 1200px;
+    height: 75px;
+    margin: auto; */
+
+    display: flex;
+    padding: 22px 0;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+
+.icon{
+    width: 200px;
+    float: left;
+    height: 70px;
+}
+
+.logo {
+    color: #ff7200;
+    font-size: 35px;
+    font-family: Arial;
+    padding-left: 10px;
+    padding-right: 250px;
+    display: flex;  /* Flexbox enables side-by-side alignment */
+    padding-top: 10px;
+    margin-top: 20px;
+}
+
+.logo span {
+    margin-right: 10px;  /* Adds space between 'Optimal' and 'Bank' */
+}
+
+
+.logo2{
+    margin-top: 20px;
+    width: 120px;
+    cursor: pointer;
+}
+
+.menu{
+    width: 400px;
+    float: right;
+    height: 70px;
+}
+
+ul{
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+ul li{
+    list-style: none;
+    margin-left: 62px;
+    margin-top: 27px;
+    font-size: 14px;
+}
+
+ul li a{
+    text-decoration: none;
+    color: #350053;
+    font-family: Arial;
+    font-weight: bold;
+    transition: 0.4s ease-in-out;
+    position: relative;
+}
+
+
+ul li a::after{
+    content:'';
+    height: 3px;
+    width: 0;
+    background: #ff7200;
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    transition: 0.5s;
+}
+
+
+ul li a:hover::after{
+    width: 100%;
+}
+
+
+
+.hero{
+    background-color: #f8f8f8;
+    overflow: hidden;
+}
+.heading h1{
+    color: #ff6347;
+    font-size: 55px;
+    text-align: center;
+    margin-top: 35px;
+}
+
+.container2{
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    margin: 65px auto;
+    
+}
+
+.description{
+    flex:1;
+    width: 600px;
+    margin: 0px 25px;
+    animation: fadeInUp 2s ease;
+}
+
+.description h2{
+    font-size: 38px;
+    margin-bottom: 20px;
+    color: #333;
+
+}
+
+.description p{
+    font-size: 24px;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    color: #666;
+
+}
+
+/* .description button{
+    font-size: 20px;
+    color: #fff;
+    display: inline-block;
+    background-color: #ff4500;
+    padding: 12px 24px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+} */
+
+
+.description button:hover{
+    background-color: #ff6347;
+    transform: scale(1.1);
+}
+
+
+.hero-image{
+    flex:1;
+    width: 600px;
+    margin: auto;
+    animation: fadeInRight 2s ease;
+}
+
+img{
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+
+}
+
+@media screen and (max-width: 768px){
+    .heading h1{
+        font-size: 45px;
+        margin-top: 30px;
+
+    }
+    .hero{
+        margin: 0px;
+    }
+    .container2{
+        width: 100%;
+        flex-direction: column;
+        margin:0px;
+        padding:0px 40px;
+
+    }
+    .description{
+        width: 100%;
+        margin:35px 0px;
+    }
+
+    .description h2{
+    font-size: 30px;
+    }
+
+    .description p{
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    
+    .description button{
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+
+    .hero-image{
+        width: 100%;
+    }
+
+}
+
+@keyframes fadeInUp{
+    0%{
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+@keyframes fadeInRight{
+    0%{
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+
+#ch{
+    display: none;
+} 
+
+#ch:checked ~ .content2{
+    display: block;
+}
+
+#ch:checked ~ label{
+    display: none;
+}
+
+.content2{
+    display: none;
+}
+
+label{
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    background-color: #ff4500 ;
+    padding: 3px 13px;
+    border-radius: 3px;
+    margin-top: 12px;
+}
+
+
+/* Move the label below the content */
+label.show-less-label{
+    display: inline-block; /* Hide "Show Less" by default */
+    margin-top: 20px; /* Adjust this for spacing below the content */
+}
+
+label.read-more-label{
+    display: inline-block;
+    margin-top: 20px; /* Add some space to the top */
+}

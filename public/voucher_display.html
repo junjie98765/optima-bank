@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reward Points</title>
+    <link rel="stylesheet" href="/static/voucher_display.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <button class="menu-btn">☰</button>
+            <span class="title" id="usernameDisplay">USERNAME</span>
+
+        </div>
+        <div class="reward-balance">
+            <span>Point Balance: <strong>600</strong></span>
+            <span class="bell">🔔</span>
+            <span class="cart" onclick="goToCart()" style="cursor:pointer;">🛒</span>
+
+        </div>
+    </header>
+    
+    <main>
+        <section class="reward-points">
+            <h2>REWARD POINTS BALANCE</h2>
+            <div class="points-bar">
+                <div class="points-progress" style="width: 60%;"></div>
+                <span>600</span>
+            </div>
+            <p>Promotion and new deals</p>
+            <div class="search-bar">
+                <input type="text" id="couponSearch" placeholder="Search for coupons..." onkeyup="searchCoupons()">
+            </div>
+            <div class="categories">
+                <button class="category-btn" onclick="filterVouchers('food')">Food & Groceries</button>
+                <button class="category-btn" onclick="filterVouchers('electronics')">Electronics & Gadgets</button>
+                <button class="category-btn" onclick="filterVouchers('beauty')">Beauty & Health</button>
+                <button class="category-btn" onclick="filterVouchers('home')">Home & Living</button>
+                <button class="category-btn" onclick="filterVouchers('travel')">Travel & Hotel</button>
+                <button class="category-btn" onclick="filterVouchers('all')">All Categories</button>
+            </div>
+        </section>
+
+        <section class="voucher-list" id="voucher-list">
+          
+            <div class="voucher-item" data-category="food">
+                <p>McDonald's</p>
+                <span>60 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn" onclick="addToCart('McDonald\'s', 60)">Add to Cart</button>
+
+            </div>
+            <div class="voucher-item" data-category="food">
+                <p>KFC</p>
+                <span>10 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn" onclick="addToCart('KFC', 10)">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="food">
+                <p>Giant</p>
+                <span>700 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn" onclick="addToCart('Giant', 700)">Add to Cart</button>
+            </div>
+
+           
+            <div class="voucher-item" data-category="electronics">
+                <p>Shopee</p>
+                <span>160 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="electronics">
+                <p>Best Denki</p>
+                <span>500 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="electronics">
+                <p>Samsung</p>
+                <span>1000 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+
+           
+            <div class="voucher-item" data-category="beauty">
+                <p>Sephora</p>
+                <span>200 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="beauty">
+                <p>L'Oréal</p>
+                <span>150 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="beauty">
+                <p>Watsons</p>
+                <span>80 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+
+       
+            <div class="voucher-item" data-category="home">
+                <p>IKEA</p>
+                <span>300 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="home">
+                <p>HomePro</p>
+                <span>500 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="home">
+                <p>Carrefour</p>
+                <span>400 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+
+           
+            <div class="voucher-item" data-category="travel">
+                <p>Traveloka</p>
+                <span>350 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="travel">
+                <p>Booking.com</p>
+                <span>600 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+            <div class="voucher-item" data-category="travel">
+                <p>AirAsia</p>
+                <span>800 points</span>
+                <p class="expiry">Offer valid until: 31st Mar 2025</p>
+                <button class="redeem-btn">Redeem</button>
+                <button class="cart-btn">Add to Cart</button>
+            </div>
+        </section>
+    
+        <div id="cartSection" class="cart-section" style="display: none;">
+            <h3>Your Cart</h3>
+            <ul id="cartItemsList"></ul>
+            <button onclick="clearCart()">Clear Cart</button>
+        </div>
+        
+    </main>
+    
+    <script src="/static/js/script.js"></script>
+    <script>
+        
+        function getUsernameFromURL() {
+          const params = new URLSearchParams(window.location.search);
+          return params.get('username');
+        }
+      
+        
+        const username = getUsernameFromURL();
+        if (username) {
+          document.getElementById('usernameDisplay').textContent = username;
+        }
+      </script>
+
+      <script>
+  let cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
+
+  function addToCart(voucherName, points) {
+    const exists = cart.find(v => v.name === voucherName);
+    if (exists) {
+      alert(`${voucherName} is already in your cart.`);
+      return;
+    }
+
+    cart.push({ name: voucherName, points });
+    localStorage.setItem("voucherCart", JSON.stringify(cart));
+    alert(`${voucherName} added to cart.`);
+  }
+
+  function goToCart() {
+    window.location.href = "/static/cart.html";
+  }
+
+  document.querySelectorAll('.redeem-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const voucherItem = button.closest('.voucher-item');
+            const voucherName = voucherItem.querySelector('p').textContent;
+            const voucherPoints = voucherItem.querySelector('span').textContent.split(' ')[0]; 
+            const voucherDescription = "Enjoy great deals"; 
+            const voucherImage = "https://example.com/mcdonalds-image.jpg";
+            const voucherValidity = "31st Mar 2025"; 
+            const voucherTerms = "Terms and conditions apply."; 
+
+            
+            window.location.href = `/redeem.html?name=${encodeURIComponent(voucherName)}&points=${encodeURIComponent(voucherPoints)}&description=${encodeURIComponent(voucherDescription)}&image=${encodeURIComponent(voucherImage)}&validity=${encodeURIComponent(voucherValidity)}&terms=${encodeURIComponent(voucherTerms)}`;
+        });
+    });
+</script>
+      
+</body>
+</html> 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script> 
+    <script defer src="js/google.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="signin.css">
+</head>
+<body>
+    
+    <div class="main">
+        <div class="navbar">
+            <div class="icon">
+                <img src="image/optima-bank_logo.png" class="logo2">
+            </div>
+
+            <div class="menu">
+                <ul>
+                    <li><a href="signin.html">HOME</a></li>
+                    <li><a href="About.html">ABOUT</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="content">
+            <h1>Welcome to<br>Our<br>Optima Bank</h1>
+            <br>
+            <p class="par">Join Optima Bank’s Loyalty Program and enjoy exclusive perks every <br> time you bank with us. Earn points on transactions, get cashback <br> offers, and unlock special discounts on partner brands</p>
+
+            <div class="form">
+            <form action="http://127.0.0.1:5000/signin" method="POST">
+                <h2>Login Here</h2>
+                <div class="txt_field">
+                    <input type="text" name="username" required>
+                    <!-- <span></span> -->
+                    <label>Username</label>
+                </div>
+                <div class="txt_field">
+                    <input type="password" name="password" required>
+                    <!-- <span></span> -->
+                    <label>Password</label>
+                </div>
+
+                <div class="remember-forget">
+                    <label><input type="checkbox" name="rememberMe"> Remember me</label>
+                    <a href="forget-password.html">Forget Password?</a>
+                </div> 
+                <input name="submit" type="Submit" value="Login">
+                <p class="link">Don't have an account<br>
+                <a href="signup.html">Sign up </a> here</p>
+                <!-- <div class="icons" id="google-signin-button">
+                    <a href=""><ion-icon name="logo-google"></ion-icon></a>
+                </div> -->
+                <div class="button-google">
+                    <div id="google-signin-button"></div> <!-- Google Sign-In Button -->
+                </div> 
+            </form>
+
+            </div>
+         </div>
+    </div>    
+    <script src="remember-me.js"></script>
+    <script src="iconeye(sigin).js"></script>
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html> 
