@@ -1,15 +1,16 @@
 {
-  "name": "software-engineering",
+  "name": "optima-rewards",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "react-scripts start"
+    "start": "react-scripts start",
+    "seed": "node scripts/seed.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Optima Bank Loyalty Points Redemption System",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
@@ -17,18 +18,21 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "express-session": "^1.18.1",
     "google-auth-library": "^9.15.1",
     "googleapis": "^146.0.0",
     "jsdom": "^26.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.12.2",
+    "mongoose": "^7.0.3",
     "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "react-router-dom": "^6.30.0",
     "react-scripts": "^3.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }

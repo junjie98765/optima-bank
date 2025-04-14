@@ -3,177 +3,187 @@ body {
     background-color: #f7f7f7;
     margin: 0;
     padding: 0;
-}
-
-header {
-    background-color: #4CAF50;  /* Standard green for header */
+  }
+  
+  header {
+    background-color: #4caf50; /* Standard green for header */
     color: white;
     display: flex;
     justify-content: space-between;
     padding: 20px;
     align-items: center;
-}
-
-.menu-btn {
+  }
+  
+  .menu-btn {
     font-size: 28px;
     background: none;
     border: none;
     color: white;
     cursor: pointer;
-}
-
-.title {
+  }
+  
+  .title {
     font-size: 24px;
     font-weight: bold;
-}
-
-.reward-balance {
+  }
+  
+  .reward-balance {
     display: flex;
     align-items: center;
     gap: 20px;
-}
-
-.reward-balance span {
+  }
+  
+  .reward-balance span {
     font-size: 16px;
-}
-
-.bell, .cart {
+  }
+  
+  .bell,
+  .cart {
     font-size: 24px;
     cursor: pointer;
-}
-
-main {
+  }
+  
+  main {
     padding: 20px;
-}
-
-.reward-points {
+  }
+  
+  .reward-points {
     text-align: center;
-}
-
-.reward-points h2 {
-    color: #333;  /* Standard dark grey for titles */
+  }
+  
+  .reward-points h2 {
+    color: #333; /* Standard dark grey for titles */
     font-size: 30px;
-}
-
-.points-bar {
+  }
+  
+  .points-bar {
     width: 100%;
     height: 20px;
-    background-color: #ddd;  /* Light grey background for progress bar */
+    background-color: #ddd; /* Light grey background for progress bar */
     border-radius: 10px;
     position: relative;
     margin: 20px 0;
-}
-
-.points-progress {
+  }
+  
+  .points-progress {
     height: 100%;
-    background-color: #4CAF50;  /* Green color for progress */
+    background-color: #4caf50; /* Green color for progress */
     border-radius: 10px;
-}
-
-.points-bar span {
+  }
+  
+  .points-bar span {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
     font-weight: bold;
-}
-
-.categories {
+  }
+  
+  .categories {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-bottom: 20px;
-}
-
-.category-btn {
+    flex-wrap: wrap;
+  }
+  
+  .category-btn {
     padding: 10px 20px;
-    background-color: #007BFF;  /* Standard blue for buttons */
+    background-color: #007bff; /* Standard blue for buttons */
     color: white;
     border: none;
     border-radius: 20px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.category-btn:hover {
-    background-color: #0056b3;  /* Darker blue on hover */
-}
-
-.voucher-list {
+  }
+  
+  .category-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  .voucher-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-}
-
-.voucher-item {
+  }
+  
+  .voucher-item {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
-    border: 1px solid #ddd;  /* Light border for vouchers */
-}
-
-.voucher-item p {
+    border: 1px solid #ddd; /* Light border for vouchers */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .voucher-item p {
     font-size: 18px;
     margin-bottom: 5px;
-}
-
-.voucher-item span {
+  }
+  
+  .voucher-item span {
     display: block;
     margin: 10px 0;
     font-size: 16px;
-}
-
-.expiry {
+    font-weight: bold;
+    color: #f39c12;
+  }
+  
+  .expiry {
     font-size: 14px;
     color: #888;
-}
-
-button {
+  }
+  
+  button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.redeem-btn {
-    background-color: #28a745;  /* Green for Redeem button */
+  }
+  
+  .redeem-btn {
+    background-color: #28a745; /* Green for Redeem button */
     color: white;
     margin-top: 10px;
-}
-
-.redeem-btn:hover {
-    background-color: #218838;  /* Darker green on hover */
-}
-
-.cart-btn {
-    background-color: #ffc107;  /* Yellow for Add to Cart button */
-    color: white;
+    width: 100%;
+  }
+  
+  .redeem-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  .cart-btn {
+    background-color: #ffc107; /* Yellow for Add to Cart button */
+    color: #333;
     margin-top: 10px;
-}
-
-.cart-btn:hover {
-    background-color: #e0a800;  /* Darker yellow on hover */
-}
-/* Styling for the search bar */
-.search-bar {
+    width: 100%;
+  }
+  
+  .cart-btn:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+  }
+  
+  /* Styling for the search bar */
+  .search-bar {
     text-align: center;
     margin-bottom: 20px;
-}
-
-#couponSearch {
+  }
+  
+  #couponSearch {
     width: 50%;
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
     border: 1px solid #ccc;
     margin-top: 10px;
-}
-/* Styling for the cart section */
-.cart-container {
+  }
+  
+  /* Styling for the cart section */
+  .cart-container {
     position: fixed;
     top: 50px;
     right: 20px;
@@ -185,14 +195,14 @@ button {
     width: 300px;
     max-height: 400px;
     overflow-y: auto;
-    display: none;  /* Hidden by default */
-}
-
-.cart-item {
+    display: none; /* Hidden by default */
+  }
+  
+  .cart-item {
     margin-bottom: 10px;
-}
-
-.cart-container button {
+  }
+  
+  .cart-container button {
     margin-top: 20px;
     background-color: #ff5722;
     color: white;
@@ -200,15 +210,14 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}
-
-.cart-container button:hover {
+  }
+  
+  .cart-container button:hover {
     background-color: #e64a19;
-}
-
-
-/* Styling for Cart Section */
-.cart-section {
+  }
+  
+  /* Styling for Cart Section */
+  .cart-section {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -218,34 +227,120 @@ button {
     right: 20px;
     width: 250px;
     display: none; /* Hidden by default */
-}
-
-.cart-section h3 {
+  }
+  
+  .cart-section h3 {
     font-size: 20px;
     margin-bottom: 10px;
-}
-
-.cart-section ul {
+  }
+  
+  .cart-section ul {
     list-style-type: none;
     padding: 0;
     margin-bottom: 10px;
-}
-
-.cart-section li {
+  }
+  
+  .cart-section li {
     font-size: 16px;
     margin-bottom: 5px;
-}
-
-.cart-section button {
-    background-color: #FF5722;  /* Red color for clear cart */
+  }
+  
+  .cart-section button {
+    background-color: #ff5722; /* Red color for clear cart */
     color: white;
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     width: 100%;
-}
-
-.cart-section button:hover {
-    background-color: #e64a19;  /* Darker red on hover */
-}
+  }
+  
+  .cart-section button:hover {
+    background-color: #e64a19; /* Darker red on hover */
+  }
+  
+  /* Quantity selector styling */
+  .quantity-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+  }
+  
+  .quantity-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    color: #333;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+  }
+  
+  .quantity-btn:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .quantity-input {
+    width: 50px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid #ddd;
+    margin: 0 5px;
+    font-size: 14px;
+  }
+  
+  /* Action buttons container */
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .categories {
+      flex-wrap: wrap;
+    }
+  
+    .category-btn {
+      margin-bottom: 5px;
+    }
+  
+    .voucher-list {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+  
+    #couponSearch {
+      width: 80%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .voucher-list {
+      grid-template-columns: 1fr;
+    }
+  
+    .reward-balance {
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+    }
+  
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .reward-balance {
+      width: 100%;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+  }
+  

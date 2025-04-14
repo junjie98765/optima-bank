@@ -286,12 +286,70 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/static", express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")))
 
-// Connect to MongoDB
+// Global error handler middleware
+app.use((err, req, res, next) => {
+  console.error('Global error handler caught:', err.stack)
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message
+  })
+})
+
+// Connect to MongoDB with more detailed error handling
 mongoose
-  .connect("mongodb://localhost:27017/registration")
+  .connect("mongodb://localhost:27017/registration", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connected to MongoDB successfully!"))
-  .catch((err) => console.log("Error connecting to MongoDB:", err));
+  .catch((err) => {
+    console.error("MongoDB connection error:", err)
+    console.error("Connection details:", {
+      host: "localhost",
+      port: "27017",
+      database: "registration",
+    })
+  })
+
+// Debug MongoDB connection
+const db = mongoose.connection
+db.on("error", (err) => {
+  console.error("MongoDB connection error event:", err)
+})
+db.once("open", () => {
+  console.log("MongoDB connection open event fired")
+  // List all collections in the database
+  db.db.listCollections().toArray((err, collections) => {
+    if (err) {
+      console.error("Error listing collections:", err)
+    } else {
+      console.log(
+        "Available collections:",
+        collections.map((c) => c.name),
+      )
+    }
+  })
+})
+
+
+// Import routes after app is initialized
+const voucherRoutes = require("./routes/vouchers")
+
+// Use routes
+app.use("/api/vouchers", voucherRoutes)
+
+// Add a test route to verify the server is running
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API is working!" })
+})
+
+// Start Server with better error handling
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+  console.log(`API available at http://localhost:${PORT}/api/vouchers`)
+})
 
 // Define User Schema
 const userSchema = new mongoose.Schema({
@@ -496,7 +554,7 @@ app.get('/admin/vouchers', async (req, res) => {
 // Admin route to update a voucher by ID
 app.put('/admin/vouchers/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, points, category, expiry, description, imageUrl, terms } = req.body;
+  const { name, description, points, category, validity, terms, iconClass, isActive } = req.body
 
   try {
     const updatedVoucher = await Voucher.findByIdAndUpdate(
@@ -535,7 +593,18 @@ app.delete('/admin/vouchers/:id', async (req, res) => {
 //   app.use("/static", express.static(path.join(__dirname, "public")));
 // });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Normal user route to get all vouchers
+app.get('/api/vouchers', async (req, res) => {
+  try {
+    const vouchers = await Voucher.find();
+    res.json(vouchers);
+  } catch (err) {
+    res.status(500).send("Error fetching vouchers");
+  }
 });
+
+
+// Start Server
+//app.listen(PORT, () => {
+//  console.log(`Server running on port ${PORT}`);
+//});

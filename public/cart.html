@@ -1,74 +1,866 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Your Cart</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-  <div class="container mt-5">
-    <h2>Your Voucher Cart</h2>
-    <ul id="cartList" class="list-group mt-3"></ul>
-    <button class="btn btn-danger mt-3" onclick="clearCart()">Clear Cart</button>
-    <a href="/static/voucher_display.html" class="btn btn-primary mt-3">Back to Voucher List</a>
-  </div>
-
-  <script>
-    const cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
-    const cartList = document.getElementById("cartList");
-
-    if (cart.length === 0) {
-      cartList.innerHTML = "<li class='list-group-item'>Your cart is empty.</li>";
-    } else {
-      cart.forEach((voucher) => {
-        const li = document.createElement("li");
-        li.className = "list-group-item d-flex justify-content-between align-items-center";
-        li.textContent = `${voucher.name} - ${voucher.points} points`;
-        cartList.appendChild(li);
-      });
-    }
-
-    function clearCart() {
-      localStorage.removeItem("voucherCart");
-      location.reload();
-    }
-  </script>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Your Cart</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optima Bank - Your Cart</title>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Page specific styles - keeping the same styles */
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0;
+            color: var(--secondary);
+        }
+        
+        .cart-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .cart-items {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .cart-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .cart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .cart-count {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .cart-body {
+            padding: 1.5rem;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-light);
+        }
+        
+        .empty-cart-icon {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+        
+        .cart-item {
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1.5rem 0;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .cart-item-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .cart-item-points {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .cart-item-description {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        
+        .cart-item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .cart-item-validity {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .remove-btn {
+            color: #ef4444;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .remove-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .summary-container {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            height: fit-content;
+        }
+        
+        .summary-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .summary-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .summary-body {
+            padding: 1.5rem;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .summary-label {
+            color: var(--text-light);
+        }
+        
+        .summary-value {
+            font-weight: 500;
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .summary-total-value {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+        
+        .summary-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+        }
+        
+        .continue-shopping {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .continue-shopping a {
+            color: var(--secondary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .continue-shopping a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Confirmation modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+                margin: 1.5rem 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Your Voucher Cart</h2>
-        <ul id="cartList" class="list-group mt-3"></ul>
-        <button class="btn btn-danger mt-3" onclick="clearCart()">Clear Cart</button>
-        <a href="/static/voucher_display.html" class="btn btn-primary mt-3">Back to Voucher List</a>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="images/optima-logo.svg" alt="Optima Bank">
+                <div class="logo-text">Optima <span>Rewards</span></div>
+            </div>
+            
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="#">Rewards</a>
+                <a href="#">Transactions</a>
+                <a href="#">Support</a>
+            </nav>
+            
+            <div class="user-actions">
+                <div class="points-badge">
+                    <i class="fas fa-coins"></i>
+                    <span id="userPoints">600</span> Points
+                </div>
+                
+                <button class="icon-button" id="notificationsBtn">
+                    <i class="fas fa-bell"></i>
+                </button>
+                
+                <button class="icon-button" id="cartBtn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge" id="cartCount">0</span>
+                </button>
+                
+                <button class="icon-button" id="userMenuBtn">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1 class="page-title">Your Cart</h1>
+        
+        <div class="cart-container" id="cartContainer">
+            <!-- Cart Items Section -->
+            <div class="cart-items">
+                <div class="cart-header">
+                    <h2 class="cart-title">Cart Items</h2>
+                    <span class="cart-count" id="itemCount">0 items</span>
+                </div>
+                
+                <div class="cart-body" id="cartItemsContainer">
+                    <!-- Loading spinner -->
+                    <div class="loader-container" id="loaderContainer">
+                        <div class="loader"></div>
+                    </div>
+                    
+                    <!-- Empty cart message (shown by default, hidden when items exist) -->
+                    <div class="empty-cart" id="emptyCartMessage" style="display: none;">
+                        <div class="empty-cart-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h3>Your cart is empty</h3>
+                        <p>Looks like you haven't added any rewards to your cart yet.</p>
+                        <a href="/" class="btn btn-primary mt-3">
+                            Browse Rewards
+                        </a>
+                    </div>
+                    
+                    <!-- Cart items will be added here dynamically -->
+                </div>
+            </div>
+            
+            <!-- Order Summary Section -->
+            <div class="summary-container" id="summaryContainer">
+                <div class="summary-header">
+                    <h2 class="summary-title">Order Summary</h2>
+                </div>
+                
+                <div class="summary-body">
+                    <div class="summary-row">
+                        <span class="summary-label">Total Items</span>
+                        <span class="summary-value" id="summaryItemCount">0</span>
+                    </div>
+                    
+                    <div class="summary-total">
+                        <span>Total Points</span>
+                        <span class="summary-total-value" id="summaryTotalPoints">0</span>
+                    </div>
+                </div>
+                
+                <div class="summary-footer">
+                    <!-- Add Clear Cart button -->
+                    <div class="d-flex gap-3 mb-3">
+                        <button class="btn btn-outline w-100" id="clearCartBtn">
+                            Clear Cart
+                        </button>
+                    </div>
+                    
+                    <button class="btn btn-primary checkout-btn" id="checkoutBtn">
+                        Checkout
+                    </button>
+                    
+                    <div class="continue-shopping mt-3">
+                        <a href="/">
+                            <i class="fas fa-arrow-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
+    
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Checkout</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to redeem all items in your cart for <span id="confirmTotalPoints">0</span> points?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelCheckoutBtn">Cancel</button>
+                <button class="btn btn-primary" id="confirmCheckoutBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="modal-title mb-3">Checkout Successful!</h3>
+                <p>You have successfully redeemed all items in your cart.</p>
+                <p class="mt-3">Your voucher codes will be sent to your registered email address.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="closeSuccessBtn">Done</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        const cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
-        const cartList = document.getElementById("cartList");
-
-        if (cart.length === 0) {
-            cartList.innerHTML = "<li class='list-group-item'>Your cart is empty.</li>";
-        } else {
-            cart.forEach((voucher) => {
-                const li = document.createElement("li");
-                li.className = "list-group-item d-flex justify-content-between align-items-center";
-                li.textContent = `${voucher.name} - ${voucher.points} points`;
-                cartList.appendChild(li);
+        // Initialize cart from localStorage
+        let cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
+        
+        // DOM elements - add clearCartBtn
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const loaderContainer = document.getElementById('loaderContainer');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const itemCountElement = document.getElementById('itemCount');
+        const cartCountElement = document.getElementById('cartCount');
+        const summaryItemCountElement = document.getElementById('summaryItemCount');
+        const summaryTotalPointsElement = document.getElementById('summaryTotalPoints');
+        const summaryContainer = document.getElementById('summaryContainer');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const successModal = document.getElementById('successModal');
+        const cancelCheckoutBtn = document.getElementById('cancelCheckoutBtn');
+        const confirmCheckoutBtn = document.getElementById('confirmCheckoutBtn');
+        const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+        const confirmTotalPointsElement = document.getElementById('confirmTotalPoints');
+        
+        // Fetch voucher details for cart items
+        async function fetchCartItemDetails() {
+            if (cart.length === 0) {
+                loaderContainer.style.display = 'none';
+                emptyCartMessage.style.display = 'block';
+                summaryContainer.style.display = 'none';
+                return;
+            }
+            
+            try {
+                // Create an array of promises to fetch all voucher details
+                const fetchPromises = cart.map(item => 
+                    fetch(`/api/vouchers/${item.id}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Failed to fetch voucher ${item.id}`);
+                            }
+                            return response.json();
+                        })
+                );
+                
+                // Wait for all promises to resolve
+                const vouchers = await Promise.all(fetchPromises);
+                
+                // Update cart items with the latest voucher details
+                cart = cart.map((item, index) => {
+                    return {
+                        ...item,
+                        name: vouchers[index].name,
+                        points: vouchers[index].points,
+                        description: vouchers[index].description,
+                        validity: vouchers[index].validity,
+                        terms: vouchers[index].terms,
+                        iconClass: vouchers[index].iconClass
+                    };
+                });
+                
+                // Save updated cart to localStorage
+                localStorage.setItem("voucherCart", JSON.stringify(cart));
+                
+                // Display cart
+                displayCart();
+            } catch (error) {
+                console.error('Error fetching cart item details:', error);
+                loaderContainer.innerHTML = `
+                    <div class="text-center">
+                        <p>Failed to load cart items. Please try again later.</p>
+                        <button class="btn btn-primary mt-3" onclick="fetchCartItemDetails()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Display cart items
+        function displayCart() {
+            // Hide loader
+            loaderContainer.style.display = 'none';
+            
+            // Update cart count
+            updateCartCount();
+            
+            if (cart.length === 0) {
+                // Show empty cart message
+                emptyCartMessage.style.display = 'block';
+                summaryContainer.style.display = 'none';
+                return;
+            }
+            
+            // Hide empty cart message
+            emptyCartMessage.style.display = 'none';
+            summaryContainer.style.display = 'block';
+            
+            // Clear existing items
+            cartItemsContainer.innerHTML = '';
+            
+            // Calculate totals
+            let totalItems = 0;
+            let totalPoints = 0;
+            
+            // Add each cart item
+            cart.forEach((item, index) => {
+                const itemTotal = item.points * item.quantity;
+                totalItems += item.quantity;
+                totalPoints += itemTotal;
+                
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'cart-item';
+                cartItemElement.dataset.index = index;
+                cartItemElement.innerHTML = `
+                    <div class="cart-item-header">
+                        <h3 class="cart-item-title">${item.name}</h3>
+                        <div class="cart-item-points">
+                            <i class="fas fa-coins"></i> ${item.points} points
+                        </div>
+                    </div>
+                    
+                    <p class="cart-item-description">${item.description}</p>
+                    
+                    <div class="cart-item-footer">
+                        <p class="cart-item-validity">Valid until: ${item.validity}</p>
+                        
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn decrease-btn">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" class="quantity-input" value="${item.quantity}" min="1">
+                                <button class="quantity-btn increase-btn">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="cart-item-total">
+                                <strong>${itemTotal}</strong> points
+                            </div>
+                            
+                            <button class="remove-btn">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                cartItemsContainer.appendChild(cartItemElement);
+                
+                // Add event listeners directly to the newly created elements
+                const decreaseBtn = cartItemElement.querySelector('.decrease-btn');
+                const increaseBtn = cartItemElement.querySelector('.increase-btn');
+                const quantityInput = cartItemElement.querySelector('.quantity-input');
+                const removeBtn = cartItemElement.querySelector('.remove-btn');
+                
+                decreaseBtn.addEventListener('click', function() {
+                    decreaseQuantity(index);
+                });
+                
+                increaseBtn.addEventListener('click', function() {
+                    increaseQuantity(index);
+                });
+                
+                quantityInput.addEventListener('change', function() {
+                    updateQuantity(index, this.value);
+                });
+                
+                removeBtn.addEventListener('click', function() {
+                    removeItem(index);
+                });
             });
+            
+            // Update summary
+            itemCountElement.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+            summaryItemCountElement.textContent = totalItems;
+            summaryTotalPointsElement.textContent = totalPoints;
+            confirmTotalPointsElement.textContent = totalPoints;
         }
-
+        
+        // Quantity manipulation functions
+        function increaseQuantity(index) {
+            cart[index].quantity++;
+            saveCartAndUpdateUI(index);
+        }
+        
+        function decreaseQuantity(index) {
+            if (cart[index].quantity > 1) {
+                cart[index].quantity--;
+                saveCartAndUpdateUI(index);
+            }
+        }
+        
+        function updateQuantity(index, value) {
+            const quantity = parseInt(value);
+            if (quantity >= 1) {
+                cart[index].quantity = quantity;
+                saveCartAndUpdateUI(index);
+            }
+        }
+        
+        function removeItem(index) {
+            // Show a brief removal animation
+            const cartItem = document.querySelector(`.cart-item[data-index="${index}"]`);
+            if (cartItem) {
+                cartItem.style.transition = 'opacity 0.3s ease';
+                cartItem.style.opacity = '0';
+                
+                setTimeout(() => {
+                    // Remove the item from the cart array
+                    cart.splice(index, 1);
+                    saveCartAndRefresh();
+                }, 300);
+            } else {
+                // If the element isn't found, just remove the item
+                cart.splice(index, 1);
+                saveCartAndRefresh();
+            }
+        }
+        
+        // FIX: Update this function to not call displayCart() first
+        function saveCartAndUpdateUI(index) {
+            // Save cart to localStorage
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            
+            // Update the specific item in the UI
+            const cartItem = document.querySelector(`.cart-item[data-index="${index}"]`);
+            if (cartItem) {
+                const item = cart[index];
+                const itemTotal = item.points * item.quantity;
+                
+                // Update quantity input
+                const quantityInput = cartItem.querySelector('.quantity-input');
+                if (quantityInput) {
+                    quantityInput.value = item.quantity;
+                }
+                
+                // Update item total points display
+                const itemTotalElement = cartItem.querySelector('.cart-item-total strong');
+                if (itemTotalElement) {
+                    itemTotalElement.textContent = itemTotal;
+                }
+                
+                // Update cart totals
+                updateCartTotals();
+            } else {
+                // If the element isn't found, refresh the whole cart
+                displayCart();
+            }
+        }
+        
+        // Update cart totals without refreshing the whole cart
+        function updateCartTotals() {
+            let totalItems = 0;
+            let totalPoints = 0;
+            
+            cart.forEach(item => {
+                totalItems += item.quantity;
+                totalPoints += item.points * item.quantity;
+            });
+            
+            // Update summary
+            itemCountElement.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+            summaryItemCountElement.textContent = totalItems;
+            summaryTotalPointsElement.textContent = totalPoints;
+            confirmTotalPointsElement.textContent = totalPoints;
+            
+            // Update cart badge
+            cartCountElement.textContent = totalItems;
+        }
+        
+        function saveCartAndRefresh() {
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            displayCart();
+        }
+        
+        function updateCartCount() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCountElement.textContent = totalItems;
+        }
+        
+        // Clear cart functionality
         function clearCart() {
-            localStorage.removeItem("voucherCart");
-            location.reload();
+            if (cart.length === 0) {
+                showNotification('Your cart is already empty!', 'info');
+                return;
+            }
+            
+            // Add fade-out animation to all cart items
+            const cartItems = document.querySelectorAll('.cart-item');
+            cartItems.forEach(item => {
+                item.style.transition = 'opacity 0.3s ease';
+                item.style.opacity = '0';
+            });
+            
+            // Wait for animation to complete before clearing
+            setTimeout(() => {
+                cart = [];
+                localStorage.setItem("voucherCart", JSON.stringify(cart));
+                displayCart();
+                showNotification('Your cart has been cleared', 'success');
+            }, 300);
         }
+        
+        // Add event listener for Clear Cart button
+        if (clearCartBtn) {
+            clearCartBtn.addEventListener('click', clearCart);
+        }
+        
+        // Checkout functionality
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!', 'error');
+                return;
+            }
+            
+            // Calculate total points
+            const totalPoints = cart.reduce((total, item) => total + (item.points * item.quantity), 0);
+            
+            // Check if user has enough points
+            const userPoints = parseInt(document.getElementById('userPoints').textContent);
+            
+            if (userPoints >= totalPoints) {
+                // Show confirmation modal
+                confirmTotalPointsElement.textContent = totalPoints;
+                confirmationModal.style.display = 'flex';
+            } else {
+                showNotification(`You don't have enough points. You need ${totalPoints} points to complete this checkout.`, 'error');
+            }
+        });
+        
+        cancelCheckoutBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+        
+        confirmCheckoutBtn.addEventListener('click', () => {
+            // Calculate total points
+            const totalPoints = cart.reduce((total, item) => total + (item.points * item.quantity), 0);
+            
+            // In a real application, you would:
+            // 1. Make an API call to process the redemption
+            // 2. Update the user's point balance
+            // 3. Generate and deliver the voucher(s)
+            
+            // For this demo, we'll just simulate the process
+            const userPointsElement = document.getElementById('userPoints');
+            const currentPoints = parseInt(userPointsElement.textContent);
+            userPointsElement.textContent = currentPoints - totalPoints;
+            
+            // Clear cart
+            cart = [];
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            
+            // Hide confirmation modal and show success modal
+            confirmationModal.style.display = 'none';
+            successModal.style.display = 'flex';
+        });
+        
+        closeSuccessBtn.addEventListener('click', () => {
+            successModal.style.display = 'none';
+            displayCart();
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = 'none';
+            }
+            if (event.target === successModal) {
+                successModal.style.display = 'none';
+            }
+        });
+        
+        // Notification function
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add notification to body
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add notification styles
+        const notificationStyles = document.createElement('style');
+        notificationStyles.innerHTML = `
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--shadow);
+                z-index: 1000;
+                transform: translateX(120%);
+                transition: transform 0.3s ease;
+                max-width: 350px;
+            }
+            
+            .notification.show {
+                transform: translateX(0);
+            }
+            
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .notification.success i {
+                color: #10b981;
+            }
+            
+            .notification.error i {
+                color: #ef4444;
+            }
+        `;
+        document.head.appendChild(notificationStyles);
+        
+        // Initialize the cart display
+        fetchCartItemDetails();
     </script>
 </body>
 </html>
