@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optima Bank - Rewards Marketplace</title>
+    <title>Optima Bank</title>
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -324,6 +324,16 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        
+        /* Cart item animation */
+        .cart-item {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .cart-item.removing {
+            opacity: 0;
+            transform: translateX(20px);
         }
         
         /* Responsive */
@@ -824,6 +834,218 @@
             displayVouchers(category, searchText);
         });
         
+        // FIXED: Updated cart modal functionality
+        function updateCartModal() {
+            const cartItems = document.getElementById('cartItems');
+            const emptyCartMessage = document.getElementById('emptyCartMessage');
+            
+            // Clear the current content
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                // Show empty cart message and hide total
+                cartItems.innerHTML = '<p class="text-center" id="emptyCartMessage">Your cart is empty.</p>';
+                return;
+            }
+            
+            // Hide empty cart message
+            let cartHTML = '';
+            let totalPoints = 0;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.points * item.quantity;
+                totalPoints += itemTotal;
+                
+                cartHTML += `
+                <div class="card mb-3 cart-item" id="cart-item-${index}" data-index="${index}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="card-title">${item.name}</h4>
+                            <button class="btn btn-sm btn-outline remove-item-btn" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <p class="card-text">${item.description}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="quantity-control">
+                                <button class="quantity-btn decrease-cart-btn" data-index="${index}">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" class="quantity-input cart-quantity-input" 
+                                       data-index="${index}" value="${item.quantity}" min="1">
+                                <button class="quantity-btn increase-cart-btn" data-index="${index}">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="text-primary font-weight-bold item-total" id="item-total-${index}">
+                                ${itemTotal} points
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            
+            // Only add the total section if there are items in the cart
+            if (cart.length > 0) {
+                cartHTML += `
+                <div class="d-flex justify-content-between align-items-center mt-4" id="cart-total-container">
+                    <h4>Total:</h4>
+                    <div class="text-primary font-weight-bold" id="cart-total-points">${totalPoints} points</div>
+                </div>
+                `;
+            }
+            
+            cartItems.innerHTML = cartHTML;
+            
+            // Add event listeners to the cart buttons
+            addCartEventListeners();
+        }
+        
+        // ADDED: New function to add event listeners to cart buttons
+        function addCartEventListeners() {
+            // Remove item buttons
+            document.querySelectorAll('.remove-item-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    removeCartItem(index);
+                });
+            });
+            
+            // Increase quantity buttons
+            document.querySelectorAll('.increase-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    increaseCartQuantity(index);
+                });
+            });
+            
+            // Decrease quantity buttons
+            document.querySelectorAll('.decrease-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    decreaseCartQuantity(index);
+                });
+            });
+            
+            // Quantity input fields
+            document.querySelectorAll('.cart-quantity-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const index = parseInt(this.dataset.index);
+                    const value = parseInt(this.value);
+                    if (!isNaN(value) && value >= 1) {
+                        updateCartQuantity(index, value);
+                    } else {
+                        this.value = cart[index].quantity; // Reset to previous value if invalid
+                    }
+                });
+            });
+        }
+        
+        function updateCartCount() {
+            const cartCount = document.getElementById('cartCount');
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+        
+        // FIXED: Cart item manipulation functions
+        function removeCartItem(index) {
+            // Add animation effect
+            const cartItem = document.getElementById(`cart-item-${index}`);
+            if (cartItem) {
+                cartItem.classList.add('removing');
+
+                // Wait for animation to complete
+                setTimeout(() => {
+                    // Remove the item from the cart array
+                    cart.splice(index, 1);
+
+                    // Save to localStorage
+                    localStorage.setItem("voucherCart", JSON.stringify(cart));
+
+                    // Update the UI - rebuild the entire cart modal to ensure totals are correct
+                    updateCartModal();
+                    updateCartCount();
+
+                    // Show notification
+                    showNotification('Item removed from cart', 'success');
+                }, 300);
+            } else {
+                // If element not found, just remove without animation
+                cart.splice(index, 1);
+                localStorage.setItem("voucherCart", JSON.stringify(cart));
+                updateCartModal();
+                updateCartCount();
+                showNotification('Item removed from cart', 'success');
+            }
+        }
+        
+        function increaseCartQuantity(index) {
+            // Increase the quantity
+            cart[index].quantity++;
+            
+            // Save to localStorage
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            
+            // Update just the affected elements instead of the whole modal
+            updateCartItemUI(index);
+            updateCartCount();
+        }
+        
+        function decreaseCartQuantity(index) {
+            if (cart[index].quantity > 1) {
+                // Decrease the quantity
+                cart[index].quantity--;
+                
+                // Save to localStorage
+                localStorage.setItem("voucherCart", JSON.stringify(cart));
+                
+                // Update just the affected elements instead of the whole modal
+                updateCartItemUI(index);
+                updateCartCount();
+            }
+        }
+        
+        function updateCartQuantity(index, value) {
+            // Update the quantity
+            cart[index].quantity = value;
+            
+            // Save to localStorage
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            
+            // Update just the affected elements instead of the whole modal
+            updateCartItemUI(index);
+            updateCartCount();
+        }
+        
+        // ADDED: New function to update just a single cart item UI
+        function updateCartItemUI(index) {
+            // Update the item total
+            const itemTotal = cart[index].quantity * cart[index].points;
+            const itemTotalElement = document.getElementById(`item-total-${index}`);
+            if (itemTotalElement) {
+                itemTotalElement.textContent = `${itemTotal} points`;
+            }
+            
+            // Update the quantity input
+            const quantityInput = document.querySelector(`.cart-quantity-input[data-index="${index}"]`);
+            if (quantityInput) {
+                quantityInput.value = cart[index].quantity;
+            }
+            
+            // Update the cart total
+            updateCartTotal();
+        }
+        
+        // ADDED: New function to update just the cart total
+        function updateCartTotal() {
+            const totalPoints = cart.reduce((total, item) => total + (item.points * item.quantity), 0);
+            const cartTotalElement = document.getElementById('cart-total-points');
+            if (cartTotalElement) {
+                cartTotalElement.textContent = `${totalPoints} points`;
+            }
+        }
+        
         // Cart modal functionality
         const cartModal = document.getElementById('cartModal');
         const cartBtn = document.getElementById('cartBtn');
@@ -846,12 +1068,36 @@
             }
         });
         
+        // FIXED: Clear cart button
         clearCartBtn.addEventListener('click', function() {
+            if (cart.length === 0) {
+                showNotification('Your cart is already empty!', 'info');
+                return;
+            }
+            
             if (confirm('Are you sure you want to clear your cart?')) {
-                cart = [];
-                localStorage.setItem("voucherCart", JSON.stringify(cart));
-                updateCartModal();
-                updateCartCount();
+                // Add fade-out animation to all cart items
+                const cartItems = document.querySelectorAll('.cart-item');
+                cartItems.forEach(item => {
+                    item.style.transition = 'opacity 0.3s ease';
+                    item.style.opacity = '0';
+                });
+                
+                // Also fade out the total
+                const totalContainer = document.getElementById('cart-total-container');
+                if (totalContainer) {
+                    totalContainer.style.transition = 'opacity 0.3s ease';
+                    totalContainer.style.opacity = '0';
+                }
+                
+                // Wait for animation to complete before clearing
+                setTimeout(() => {
+                    cart = [];
+                    localStorage.setItem("voucherCart", JSON.stringify(cart));
+                    updateCartModal(); // This will rebuild the cart UI
+                    updateCartCount();
+                    showNotification('Cart cleared successfully', 'success');
+                }, 300);
             }
         });
         
@@ -863,102 +1109,6 @@
             
             window.location.href = 'cart';
         });
-        
-        function updateCartModal() {
-            const cartItems = document.getElementById('cartItems');
-            const emptyCartMessage = document.getElementById('emptyCartMessage');
-            
-            if (cart.length === 0) {
-                emptyCartMessage.style.display = 'block';
-                cartItems.innerHTML = '<p class="text-center" id="emptyCartMessage">Your cart is empty.</p>';
-                return;
-            }
-            
-            emptyCartMessage.style.display = 'none';
-            
-            let cartHTML = '';
-            let totalPoints = 0;
-            
-            cart.forEach((item, index) => {
-                const itemTotal = item.points * item.quantity;
-                totalPoints += itemTotal;
-                
-                cartHTML += `
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h4 class="card-title">${item.name}</h4>
-                            <button class="btn btn-sm btn-outline" onclick="removeCartItem(${index})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                        <p class="card-text">${item.description}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="quantity-control">
-                                <button class="quantity-btn" onclick="decreaseCartQuantity(${index})">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateCartQuantity(${index}, this.value)">
-                                <button class="quantity-btn" onclick="increaseCartQuantity(${index})">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <div class="text-primary font-weight-bold">${itemTotal} points</div>
-                        </div>
-                    </div>
-                </div>
-                `;
-            });
-            
-            cartHTML += `
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <h4>Total:</h4>
-                <div class="text-primary font-weight-bold">${totalPoints} points</div>
-            </div>
-            `;
-            
-            cartItems.innerHTML = cartHTML;
-        }
-        
-        function updateCartCount() {
-            const cartCount = document.getElementById('cartCount');
-            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            cartCount.textContent = totalItems;
-        }
-        
-        // Cart item manipulation functions
-        function removeCartItem(index) {
-            cart.splice(index, 1);
-            localStorage.setItem("voucherCart", JSON.stringify(cart));
-            updateCartModal();
-            updateCartCount();
-        }
-        
-        function increaseCartQuantity(index) {
-            cart[index].quantity++;
-            localStorage.setItem("voucherCart", JSON.stringify(cart));
-            updateCartModal();
-            updateCartCount();
-        }
-        
-        function decreaseCartQuantity(index) {
-            if (cart[index].quantity > 1) {
-                cart[index].quantity--;
-                localStorage.setItem("voucherCart", JSON.stringify(cart));
-                updateCartModal();
-                updateCartCount();
-            }
-        }
-        
-        function updateCartQuantity(index, value) {
-            const quantity = parseInt(value);
-            if (quantity >= 1) {
-                cart[index].quantity = quantity;
-                localStorage.setItem("voucherCart", JSON.stringify(cart));
-                updateCartModal();
-                updateCartCount();
-            }
-        }
         
         // Notification function
         function showNotification(message, type = 'success') {
