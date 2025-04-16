@@ -281,41 +281,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <div class="logo">
-                <img src="images/optima-logo.svg" alt="Optima Bank">
-                <div class="logo-text">Optima <span>Rewards</span></div>
-            </div>
-            
-            <nav class="nav-links">
-                <a href="/">Home</a>
-                <a href="#">Rewards</a>
-                <a href="#">Transactions</a>
-                <a href="#">Support</a>
-            </nav>
-            
-            <div class="user-actions">
-                <div class="points-badge">
-                    <i class="fas fa-coins"></i>
-                    <span id="userPoints">600</span> Points
-                </div>
-                
-                <button class="icon-button" id="notificationsBtn">
-                    <i class="fas fa-bell"></i>
-                </button>
-                
-                <button class="icon-button" id="cartBtn">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="badge" id="cartCount">0</span>
-                </button>
-                
-                <button class="icon-button" id="userMenuBtn">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+    <div data-include="/components/header.html"></div>
     
     <div class="container">
         <h1 class="page-title">Your Cart</h1>
@@ -427,12 +393,20 @@
         // Initialize cart from localStorage
         let cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
         
-        // DOM elements - add clearCartBtn
+        // Function to update cart count in the header
+        function updateCartCount() {
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) {
+                const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                cartCount.textContent = totalItems;
+            }
+        }
+        
+        // DOM elements
         const cartItemsContainer = document.getElementById('cartItemsContainer');
         const loaderContainer = document.getElementById('loaderContainer');
         const emptyCartMessage = document.getElementById('emptyCartMessage');
         const itemCountElement = document.getElementById('itemCount');
-        const cartCountElement = document.getElementById('cartCount');
         const summaryItemCountElement = document.getElementById('summaryItemCount');
         const summaryTotalPointsElement = document.getElementById('summaryTotalPoints');
         const summaryContainer = document.getElementById('summaryContainer');
@@ -602,22 +576,49 @@
         
         // Quantity manipulation functions
         function increaseQuantity(index) {
+            // Increase the quantity
             cart[index].quantity++;
-            saveCartAndUpdateUI(index);
+            
+            // Save to localStorage
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            
+            // Update just the affected elements instead of the whole modal
+            updateCartItemUI(index);
+            
+            // Update cart count in the header
+            updateCartCount();
         }
         
         function decreaseQuantity(index) {
             if (cart[index].quantity > 1) {
+                // Decrease the quantity
                 cart[index].quantity--;
-                saveCartAndUpdateUI(index);
+                
+                // Save to localStorage
+                localStorage.setItem("voucherCart", JSON.stringify(cart));
+                
+                // Update just the affected elements instead of the whole modal
+                updateCartItemUI(index);
+                
+                // Update cart count in the header
+                updateCartCount();
             }
         }
         
         function updateQuantity(index, value) {
+            // Update the quantity
             const quantity = parseInt(value);
             if (quantity >= 1) {
                 cart[index].quantity = quantity;
-                saveCartAndUpdateUI(index);
+                
+                // Save to localStorage
+                localStorage.setItem("voucherCart", JSON.stringify(cart));
+                
+                // Update just the affected elements instead of the whole modal
+                updateCartItemUI(index);
+                
+                // Update cart count in the header
+                updateCartCount();
             }
         }
         
@@ -640,35 +641,27 @@
             }
         }
         
-        // FIX: Update this function to not call displayCart() first
-        function saveCartAndUpdateUI(index) {
-            // Save cart to localStorage
-            localStorage.setItem("voucherCart", JSON.stringify(cart));
-            
-            // Update the specific item in the UI
+        // Update a single cart item UI
+        function updateCartItemUI(index) {
+            // Update the item total
+            const itemTotal = cart[index].quantity * cart[index].points;
             const cartItem = document.querySelector(`.cart-item[data-index="${index}"]`);
+            
             if (cartItem) {
-                const item = cart[index];
-                const itemTotal = item.points * item.quantity;
-                
-                // Update quantity input
-                const quantityInput = cartItem.querySelector('.quantity-input');
-                if (quantityInput) {
-                    quantityInput.value = item.quantity;
-                }
-                
-                // Update item total points display
                 const itemTotalElement = cartItem.querySelector('.cart-item-total strong');
                 if (itemTotalElement) {
                     itemTotalElement.textContent = itemTotal;
                 }
                 
-                // Update cart totals
-                updateCartTotals();
-            } else {
-                // If the element isn't found, refresh the whole cart
-                displayCart();
+                // Update quantity input
+                const quantityInput = cartItem.querySelector('.quantity-input');
+                if (quantityInput) {
+                    quantityInput.value = cart[index].quantity;
+                }
             }
+            
+            // Update cart totals
+            updateCartTotals();
         }
         
         // Update cart totals without refreshing the whole cart
@@ -686,19 +679,11 @@
             summaryItemCountElement.textContent = totalItems;
             summaryTotalPointsElement.textContent = totalPoints;
             confirmTotalPointsElement.textContent = totalPoints;
-            
-            // Update cart badge
-            cartCountElement.textContent = totalItems;
         }
         
         function saveCartAndRefresh() {
             localStorage.setItem("voucherCart", JSON.stringify(cart));
             displayCart();
-        }
-        
-        function updateCartCount() {
-            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            cartCountElement.textContent = totalItems;
         }
         
         // Clear cart functionality
@@ -708,20 +693,33 @@
                 return;
             }
             
-            // Add fade-out animation to all cart items
-            const cartItems = document.querySelectorAll('.cart-item');
-            cartItems.forEach(item => {
-                item.style.transition = 'opacity 0.3s ease';
-                item.style.opacity = '0';
-            });
-            
-            // Wait for animation to complete before clearing
-            setTimeout(() => {
-                cart = [];
-                localStorage.setItem("voucherCart", JSON.stringify(cart));
-                displayCart();
-                showNotification('Your cart has been cleared', 'success');
-            }, 300);
+            if (confirm('Are you sure you want to clear your cart?')) {
+                // Add fade-out animation to all cart items
+                const cartItems = document.querySelectorAll('.cart-item');
+                cartItems.forEach(item => {
+                    item.style.transition = 'opacity 0.3s ease';
+                    item.style.opacity = '0';
+                });
+                
+                // Also fade out the total
+                const totalContainer = document.getElementById('cart-total-container');
+                if (totalContainer) {
+                    totalContainer.style.transition = 'opacity 0.3s ease';
+                    totalContainer.style.opacity = '0';
+                }
+                
+                // Wait for animation to complete before clearing
+                setTimeout(() => {
+                    cart = [];
+                    localStorage.setItem("voucherCart", JSON.stringify(cart));
+                    displayCart(); // This will rebuild the cart UI
+                    
+                    // Update cart count in the header
+                    updateCartCount();
+                    
+                    showNotification('Cart cleared successfully', 'success');
+                }, 300);
+            }
         }
         
         // Add event listener for Clear Cart button
@@ -730,7 +728,7 @@
         }
         
         // Checkout functionality
-        checkoutBtn.addEventListener('click', () => {
+        checkoutBtn.addEventListener('click', function() {
             if (cart.length === 0) {
                 showNotification('Your cart is empty!', 'error');
                 return;
@@ -860,7 +858,22 @@
         document.head.appendChild(notificationStyles);
         
         // Initialize the cart display
-        fetchCartItemDetails();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for the header to be loaded
+            const headerInterval = setInterval(() => {
+                if (document.getElementById('userPoints')) {
+                    clearInterval(headerInterval);
+                    fetchCartItemDetails();
+                }
+            }, 100);
+            
+            // Set a timeout to prevent infinite waiting
+            setTimeout(() => {
+                clearInterval(headerInterval);
+                fetchCartItemDetails();
+            }, 3000);
+        });
     </script>
+    <script src="/js/include-header.js"></script>
 </body>
 </html>

@@ -29,7 +29,7 @@
 
 
     <div class="container">
-        <form id="form" action="/">
+        <form id="form" action="/register" method="POST">
             <h1>Sign Up Here</h1>
             <div class="input-control">
                 <label for="username">Username</label>
@@ -50,12 +50,12 @@
 
             <div class="input-control">
                 <label for="password">Password</label>
-                <input id="password"name="password" type="password">
+                <input id="password" name="password" type="password">
                 <div class="error"></div>
             </div>
             <div class="input-control">
                 <label for="password2">Password again</label>
-                <input id="password2"name="password2" type="password">
+                <input id="password2" name="password2" type="password">
                 <div class="error"></div>
             </div>
             <div class="button-submit">
@@ -68,15 +68,10 @@
             
             <div class="option-text "><p>or sign in with</p>
             </div>     <div class="line2"></div>
-            <!-- <div class="button-google">
-            <button class="btn-google">
-                    <img src="image/Google_Icons-09-512.webp" alt="google" className="social-icon">
-                    <p> Sign In </p>
-            </button>
-        </div> -->
-        <div class="button-google">
-            <div id="google-signin-button"></div> <!-- Google Sign-In Button -->
-        </div>
+            
+            <div class="button-google">
+                <div id="google-signin-button"></div> <!-- Google Sign-In Button -->
+            </div>
         
         </form>
     </div>

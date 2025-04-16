@@ -53,6 +53,13 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     console.log(`Fetching voucher with ID: ${req.params.id}`)
+
+    // Validate the ID format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      console.log(`Invalid voucher ID format: ${req.params.id}`)
+      return res.status(400).json({ message: "Invalid voucher ID format" })
+    }
+
     const voucher = await Voucher.findById(req.params.id)
 
     if (!voucher) {
@@ -140,6 +147,38 @@ router.delete("/:id", async (req, res, next) => {
   } catch (error) {
     console.error("Error deleting voucher:", error)
     next(error)
+  }
+})
+
+// Add a test endpoint to check database connection
+router.get("/test", async (req, res) => {
+  try {
+    // Check MongoDB connection status
+    const dbState = mongoose.connection.readyState
+    const states = {
+      0: "disconnected",
+      1: "connected",
+      2: "connecting",
+      3: "disconnecting",
+    }
+
+    res.json({
+      success: dbState === 1,
+      database: {
+        connection: {
+          status: states[dbState],
+          code: dbState,
+        },
+      },
+      timestamp: new Date().toISOString(),
+    })
+  } catch (error) {
+    console.error("Error in test endpoint:", error)
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString(),
+    })
   }
 })
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optima Bank - TESTT</title>
+    <title>Optima Bank - Rewards Marketplace</title>
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -376,41 +376,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <div class="logo">
-                <img src="images/optima-logo.svg" alt="Optima Bank">
-                <div class="logo-text">Optima <span>Rewards</span></div>
-            </div>
-            
-            <nav class="nav-links">
-                <a href="#">Home</a>
-                <a href="#">Rewards</a>
-                <a href="#">Transactions</a>
-                <a href="#">Support</a>
-            </nav>
-            
-            <div class="user-actions">
-                <div class="points-badge">
-                    <i class="fas fa-coins"></i>
-                    <span id="userPoints">600</span> Points
-                </div>
-                
-                <button class="icon-button" id="notificationsBtn">
-                    <i class="fas fa-bell"></i>
-                </button>
-                
-                <button class="icon-button" id="cartBtn">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="badge" id="cartCount">0</span>
-                </button>
-                
-                <button class="icon-button" id="userMenuBtn">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+    <div data-include="/components/header.html"></div>
     
     <!-- Hero Section -->
     <section class="hero-section">
@@ -491,7 +457,6 @@
     <script>
         // Initialize cart from localStorage
         let cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
-        updateCartCount();
         
         // Fetch vouchers from API
         let allVouchers = [];
@@ -756,7 +721,13 @@
                         // Show confirmation and reset quantity
                         showNotification(`Added ${quantity} ${voucher.name} voucher(s) to your cart!`);
                         quantityInput.value = 1;
-                        updateCartCount();
+                        
+                        // Update cart count in the header (if it exists)
+                        const cartCount = document.getElementById('cartCount');
+                        if (cartCount) {
+                            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                            cartCount.textContent = totalItems;
+                        }
                     } catch (error) {
                         console.error('Error adding to cart:', error);
                         showNotification('Failed to add voucher to cart. Please try again.', 'error');
@@ -857,43 +828,43 @@
                 totalPoints += itemTotal;
                 
                 cartHTML += `
-                <div class="card mb-3 cart-item" id="cart-item-${index}" data-index="${index}">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h4 class="card-title">${item.name}</h4>
-                            <button class="btn btn-sm btn-outline remove-item-btn" data-index="${index}">
-                                <i class="fas fa-trash"></i>
+            <div class="card mb-3 cart-item" id="cart-item-${index}" data-index="${index}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4 class="card-title">${item.name}</h4>
+                        <button class="btn btn-sm btn-outline remove-item-btn" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <p class="card-text">${item.description}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="quantity-control">
+                            <button class="quantity-btn decrease-cart-btn" data-index="${index}">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="quantity-input cart-quantity-input" 
+                                   data-index="${index}" value="${item.quantity}" min="1">
+                            <button class="quantity-btn increase-cart-btn" data-index="${index}">
+                                <i class="fas fa-plus"></i>
                             </button>
                         </div>
-                        <p class="card-text">${item.description}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="quantity-control">
-                                <button class="quantity-btn decrease-cart-btn" data-index="${index}">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input type="number" class="quantity-input cart-quantity-input" 
-                                       data-index="${index}" value="${item.quantity}" min="1">
-                                <button class="quantity-btn increase-cart-btn" data-index="${index}">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <div class="text-primary font-weight-bold item-total" id="item-total-${index}">
-                                ${itemTotal} points
-                            </div>
+                        <div class="text-primary font-weight-bold item-total" id="item-total-${index}">
+                            ${itemTotal} points
                         </div>
                     </div>
                 </div>
-                `;
+            </div>
+            `;
             });
             
             // Only add the total section if there are items in the cart
             if (cart.length > 0) {
                 cartHTML += `
-                <div class="d-flex justify-content-between align-items-center mt-4" id="cart-total-container">
-                    <h4>Total:</h4>
-                    <div class="text-primary font-weight-bold" id="cart-total-points">${totalPoints} points</div>
-                </div>
-                `;
+            <div class="d-flex justify-content-between align-items-center mt-4" id="cart-total-container">
+                <h4>Total:</h4>
+                <div class="text-primary font-weight-bold" id="cart-total-points">${totalPoints} points</div>
+            </div>
+            `;
             }
             
             cartItems.innerHTML = cartHTML;
@@ -942,11 +913,6 @@
             });
         }
         
-        function updateCartCount() {
-            const cartCount = document.getElementById('cartCount');
-            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            cartCount.textContent = totalItems;
-        }
         
         // FIXED: Cart item manipulation functions
         function removeCartItem(index) {
@@ -955,27 +921,40 @@
             if (cartItem) {
                 cartItem.classList.add('removing');
 
-                // Wait for animation to complete
+            // Wait for animation to complete
                 setTimeout(() => {
-                    // Remove the item from the cart array
+                // Remove the item from the cart array
                     cart.splice(index, 1);
 
-                    // Save to localStorage
+                // Save to localStorage
                     localStorage.setItem("voucherCart", JSON.stringify(cart));
 
-                    // Update the UI - rebuild the entire cart modal to ensure totals are correct
+                // Update the UI - rebuild the entire cart modal to ensure totals are correct
                     updateCartModal();
-                    updateCartCount();
+                
+                // Update cart count in the header (if it exists)
+                    const cartCount = document.getElementById('cartCount');
+                    if (cartCount) {
+                        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                        cartCount.textContent = totalItems;
+                    }
 
-                    // Show notification
+                // Show notification
                     showNotification('Item removed from cart', 'success');
                 }, 300);
             } else {
-                // If element not found, just remove without animation
+            // If element not found, just remove without animation
                 cart.splice(index, 1);
                 localStorage.setItem("voucherCart", JSON.stringify(cart));
                 updateCartModal();
-                updateCartCount();
+            
+            // Update cart count in the header (if it exists)
+                const cartCount = document.getElementById('cartCount');
+                if (cartCount) {
+                    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                    cartCount.textContent = totalItems;
+                }
+            
                 showNotification('Item removed from cart', 'success');
             }
         }
@@ -983,13 +962,19 @@
         function increaseCartQuantity(index) {
             // Increase the quantity
             cart[index].quantity++;
-            
+        
             // Save to localStorage
             localStorage.setItem("voucherCart", JSON.stringify(cart));
-            
+        
             // Update just the affected elements instead of the whole modal
             updateCartItemUI(index);
-            updateCartCount();
+        
+            // Update cart count in the header (if it exists)
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) {
+                const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                cartCount.textContent = totalItems;
+            }
         }
         
         function decreaseCartQuantity(index) {
@@ -1002,7 +987,13 @@
                 
                 // Update just the affected elements instead of the whole modal
                 updateCartItemUI(index);
-                updateCartCount();
+                
+                // Update cart count in the header (if it exists)
+                const cartCount = document.getElementById('cartCount');
+                if (cartCount) {
+                    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                    cartCount.textContent = totalItems;
+                }
             }
         }
         
@@ -1015,7 +1006,13 @@
             
             // Update just the affected elements instead of the whole modal
             updateCartItemUI(index);
-            updateCartCount();
+            
+            // Update cart count in the header (if it exists)
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) {
+                const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                cartCount.textContent = totalItems;
+            }
         }
         
         // ADDED: New function to update just a single cart item UI
@@ -1048,14 +1045,19 @@
         
         // Cart modal functionality
         const cartModal = document.getElementById('cartModal');
-        const cartBtn = document.getElementById('cartBtn');
         const closeCartModal = document.getElementById('closeCartModal');
         const clearCartBtn = document.getElementById('clearCartBtn');
         const checkoutBtn = document.getElementById('checkoutBtn');
         
-        cartBtn.addEventListener('click', function() {
-            updateCartModal();
-            cartModal.style.display = 'flex';
+        // Add event listener for cart button in the header
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartBtn = document.getElementById('cartBtn');
+            if (cartBtn) {
+                cartBtn.addEventListener('click', function() {
+                    updateCartModal();
+                    cartModal.style.display = 'flex';
+                });
+            }
         });
         
         closeCartModal.addEventListener('click', function() {
@@ -1095,7 +1097,13 @@
                     cart = [];
                     localStorage.setItem("voucherCart", JSON.stringify(cart));
                     updateCartModal(); // This will rebuild the cart UI
-                    updateCartCount();
+                
+                    // Update cart count in the header (if it exists)
+                    const cartCount = document.getElementById('cartCount');
+                    if (cartCount) {
+                        cartCount.textContent = '0';
+                    }
+                
                     showNotification('Cart cleared successfully', 'success');
                 }, 300);
             }
@@ -1116,11 +1124,11 @@
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.innerHTML = `
-                <div class="notification-content">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
+            <div class="notification-content">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
             
             // Add notification to body
             document.body.appendChild(notification);
@@ -1142,42 +1150,43 @@
         // Add notification styles
         const notificationStyles = document.createElement('style');
         notificationStyles.innerHTML = `
-            .notification {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                background-color: white;
-                border-radius: var(--border-radius);
-                box-shadow: var(--shadow);
-                z-index: 1000;
-                transform: translateX(120%);
-                transition: transform 0.3s ease;
-                max-width: 350px;
-            }
-            
-            .notification.show {
-                transform: translateX(0);
-            }
-            
-            .notification-content {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            .notification.success i {
-                color: #10b981;
-            }
-            
-            .notification.error i {
-                color: #ef4444;
-            }
-        `;
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.success i {
+            color: #10b981;
+        }
+        
+        .notification.error i {
+            color: #ef4444;
+        }
+    `;
         document.head.appendChild(notificationStyles);
         
         // Initialize the page
         fetchVouchers();
     </script>
+    <script src="/js/include-header.js"></script>
 </body>
 </html>
