@@ -4,147 +4,72 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optima Bank - Sign In</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/signin.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script> 
+    <script defer src="js/google.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="signin.css">
 </head>
 <body>
-    <div class="navbar">
-        <div class="icon">
-            <img src="image/optima-bank_logo.png" class="logo2" alt="Optima Bank Logo">
-        </div>
-        <div class="menu">
-            <ul>
-                <li><a href="signin.html">HOME</a></li>
-                <li><a href="About.html">ABOUT</a></li>
-                <li><a href="contact.html">CONTACT</a></li>
-            </ul>
-        </div>
-    </div>
     
     <div class="main">
-        <div class="content">
-            <div class="left-section">
-                <h1>Welcome to<br>Optima Bank<br>Rewards</h1>
-                <p>Join Optima Bank's Loyalty Program and enjoy exclusive perks every time you bank with us. Earn points on transactions, get cashback offers, and unlock special discounts on partner brands.</p>
+        <div class="navbar">
+            <div class="icon">
+                <img src="image/optima-bank_logo.png" class="logo2">
             </div>
-            
-            <div class="right-section">
-                <div class="form-container">
-                    <h2>Sign In</h2>
-                    
-                    <form id="loginForm" action="/signin" method="POST">
-                        <div class="input-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" required>
-                            <div class="error-message" id="username-error"></div>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required>
-                            <div class="error-message" id="password-error"></div>
-                        </div>
-                        
-                        <div class="remember-forget">
-                            <label>
-                                <input type="checkbox" name="rememberMe"> Remember me
-                            </label>
-                            <a href="forget-password.html">Forgot Password?</a>
-                        </div>
-                        
-                        <button type="submit" class="btn-submit">Sign In</button>
-                        
-                        <div class="signup-link">
-                            Don't have an account? <a href="signup.html">Sign Up</a>
-                        </div>
-                        
-                        <div class="divider">
-                            <span>OR</span>
-                        </div>
-                        
-                        <div class="social-login">
-                            <div id="google-signin-button"></div>
-                        </div>
-                    </form>
-                </div>
+
+            <div class="menu">
+                <ul>
+                    <li><a href="signin.html">HOME</a></li>
+                    <li><a href="About.html">ABOUT</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                </ul>
             </div>
+
         </div>
-    </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('loginForm');
-            const usernameError = document.getElementById('username-error');
-            const passwordError = document.getElementById('password-error');
-            
-            loginForm.addEventListener('submit', function(e) {
-                // Reset error messages
-                usernameError.style.display = 'none';
-                passwordError.style.display = 'none';
-                
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value.trim();
-                
-                let hasError = false;
-                
-                if (!username) {
-                    usernameError.textContent = 'Username is required';
-                    usernameError.style.display = 'block';
-                    hasError = true;
-                }
-                
-                if (!password) {
-                    passwordError.textContent = 'Password is required';
-                    passwordError.style.display = 'block';
-                    hasError = true;
-                }
-                
-                if (hasError) {
-                    e.preventDefault();
-                }
-            });
-        });
-        
-        // Google Sign-In
-        function handleCredentialResponse(response) {
-            const id_token = response.credential;
-            
-            fetch('/auth/google/callback', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token: id_token }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = data.redirect;
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(err => {
-                console.error('Error:', err);
-                alert('An error occurred. Please try again.');
-            });
-        }
-        
-        window.onload = function() {
-            google.accounts.id.initialize({
-                client_id: '262201707875-fsd8diveqkc8taqvikf7sd5n6u05hu16.apps.googleusercontent.com',
-                callback: handleCredentialResponse,
-            });
-            google.accounts.id.renderButton(
-                document.getElementById("google-signin-button"),
-                { theme: "outline", size: "large", width: 280 }
-            );
-        };
-    </script>
+        <div class="content">
+            <h1>Welcome to<br>Our<br>Optima Bank</h1>
+            <br>
+            <p class="par">Join Optima Bank’s Loyalty Program and enjoy exclusive perks every <br> time you bank with us. Earn points on transactions, get cashback <br> offers, and unlock special discounts on partner brands</p>
+
+            <div class="form">
+            <form action="http://127.0.0.1:5000/signin" method="POST">
+                <h2>Login Here</h2>
+                <div class="txt_field">
+                    <input type="text" name="username" required>
+                    <!-- <span></span> -->
+                    <label>Username</label>
+                </div>
+                <div class="txt_field">
+                    <input type="password" name="password" required>
+                    <!-- <span></span> -->
+                    <label>Password</label>
+                </div>
+
+                <div class="remember-forget">
+                    <label><input type="checkbox" name="rememberMe"> Remember me</label>
+                    <a href="forget-password.html">Forget Password?</a>
+                </div> 
+                <input name="submit" type="Submit" value="Login">
+                <p class="link">Don't have an account<br>
+                <a href="signup.html">Sign up </a> here</p>
+                <!-- <div class="icons" id="google-signin-button">
+                    <a href=""><ion-icon name="logo-google"></ion-icon></a>
+                </div> -->
+                <div class="button-google">
+                    <div id="google-signin-button"></div> <!-- Google Sign-In Button -->
+                </div> 
+            </form>
+
+            </div>
+         </div>
+    </div>    
+    <script src="remember-me.js"></script>
+    <script src="iconeye(sigin).js"></script>
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script src="app.js"></script>
 </body>
-</html>
+
+</html> 
