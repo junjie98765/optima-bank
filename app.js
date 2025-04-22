@@ -17,6 +17,7 @@ const jwt = require("jsonwebtoken")
 // Import routes
 const voucherRoutes = require("./routes/vouchers")
 const authRoutes = require("./routes/auth")
+const pointsRoutes = require("./routes/points") // Add this line
 
 // Initialize Express
 const app = express()
@@ -110,6 +111,7 @@ db.once("open", () => {
 // Use routes
 app.use("/api/vouchers", voucherRoutes)
 app.use("/", authRoutes)
+app.use("/api/points", pointsRoutes) // Add this line
 
 // Protected routes - require authentication
 app.get("/voucher_display.html", authenticateUser, (req, res) => {

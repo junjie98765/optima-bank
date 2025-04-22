@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Optima Bank - Rewards Marketplace</title>
-
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -337,6 +336,33 @@
             transform: translateX(20px);
         }
         
+        /* Terms & Conditions link */
+        .terms-link {
+            font-size: 0.75rem;
+            color: var(--primary);
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+        
+        .terms-link:hover {
+            color: var(--secondary);
+        }
+        
+        /* Terms & Conditions modal */
+        .terms-modal-content {
+            max-width: 600px;
+        }
+        
+        .terms-content {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            line-height: 1.6;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .hero-title {
@@ -394,12 +420,12 @@
             <p>Keep earning points to unlock premium rewards and exclusive offers.</p>
             
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 60%;"></div>
+                <div class="progress-fill" style="width: 0%;"></div>
             </div>
             
             <div class="progress-labels">
                 <span>0 points</span>
-                <span>600 points</span>
+                <span data-points-display>0</span>
                 <span>1,000 points</span>
             </div>
         </div>
@@ -455,6 +481,24 @@
         </div>
     </div>
     
+    <!-- Terms & Conditions Modal -->
+    <div class="modal" id="termsModal">
+        <div class="modal-content terms-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Terms & Conditions</h3>
+                <button class="modal-close" id="closeTermsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="terms-content" id="termsContent">
+                    <!-- Terms content will be loaded here dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="closeTermsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // Initialize cart from localStorage
         let cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
@@ -493,6 +537,39 @@
                 `;
             }
         }
+
+        async function fetchUserPoints() {
+    try {
+        // Use the points manager to fetch points
+        if (window.pointsManager) {
+            await window.pointsManager.fetchPoints();
+        } else {
+            // Fallback to direct API call if points manager is not available
+            const response = await fetch('/api/user/points', {
+                credentials: 'include' // Include cookies for authentication
+            });
+            if (!response.ok) throw new Error("Failed to fetch user points");
+
+            const data = await response.json();
+            const points = data.points || 0;
+
+            // Update all elements displaying points
+            document.querySelectorAll('[data-points-display]').forEach(el => {
+                el.textContent = points;
+            });
+
+            // Update progress bar fill (assuming 1000 is the max points)
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                const percent = Math.min((points / 1000) * 100, 100);
+                progressFill.style.width = `${percent}%`;
+            }
+        }
+    } catch (error) {
+        console.error("Error loading user points:", error);
+    }
+}
+
         
         // Display vouchers based on current page and filters
         function displayVouchers(category = 'all', searchTerm = '') {
@@ -557,6 +634,7 @@
                     </div>
                     <div class="voucher-body">
                         <p class="voucher-description">${voucher.description}</p>
+                        <p class="terms-link" data-id="${voucher._id}">View Terms & Conditions</p>
                         
                         <div class="quantity-control">
                             <button class="quantity-btn decrease-btn">
@@ -768,6 +846,34 @@
                     } catch (error) {
                         console.error('Error redeeming voucher:', error);
                         showNotification('Failed to redeem voucher. Please try again.', 'error');
+                    }
+                });
+            });
+            
+            // Terms & Conditions functionality
+            document.querySelectorAll('.terms-link').forEach(link => {
+                link.addEventListener('click', async function() {
+                    const voucherId = this.dataset.id;
+                    
+                    try {
+                        // Fetch voucher details from API
+                        const response = await fetch(`/api/vouchers/${voucherId}`);
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch voucher details');
+                        }
+                        
+                        const voucher = await response.json();
+                        
+                        // Set terms content in modal
+                        const termsContent = document.getElementById('termsContent');
+                        termsContent.innerHTML = voucher.terms || 'No terms and conditions available for this voucher.';
+                        
+                        // Show terms modal
+                        const termsModal = document.getElementById('termsModal');
+                        termsModal.style.display = 'flex';
+                    } catch (error) {
+                        console.error('Error fetching terms and conditions:', error);
+                        showNotification('Failed to load terms and conditions. Please try again.', 'error');
                     }
                 });
             });
@@ -1071,6 +1177,25 @@
             }
         });
         
+        // Terms & Conditions modal functionality
+        const termsModal = document.getElementById('termsModal');
+        const closeTermsModal = document.getElementById('closeTermsModal');
+        const closeTermsBtn = document.getElementById('closeTermsBtn');
+        
+        closeTermsModal.addEventListener('click', function() {
+            termsModal.style.display = 'none';
+        });
+        
+        closeTermsBtn.addEventListener('click', function() {
+            termsModal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === termsModal) {
+                termsModal.style.display = 'none';
+            }
+        });
+        
         // FIXED: Clear cart button
         clearCartBtn.addEventListener('click', function() {
             if (cart.length === 0) {
@@ -1187,7 +1312,11 @@
         
         // Initialize the page
         fetchVouchers();
+        fetchUserPoints();  // <- Add this
+
     </script>
     <script src="/js/include-header.js"></script>
+    <script src="/js/points-manager.js"></script>
+    <script src="/js/dropdown-menu.js"></script>
 </body>
 </html>

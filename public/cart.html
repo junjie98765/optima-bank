@@ -753,32 +753,61 @@
             confirmationModal.style.display = 'none';
         });
         
-        confirmCheckoutBtn.addEventListener('click', () => {
+        confirmCheckoutBtn.addEventListener('click', async () => {
             // Calculate total points
             const totalPoints = cart.reduce((total, item) => total + (item.points * item.quantity), 0);
             
-            // In a real application, you would:
-            // 1. Make an API call to process the redemption
-            // 2. Update the user's point balance
-            // 3. Generate and deliver the voucher(s)
-            
-            // For this demo, we'll just simulate the process
-            const userPointsElement = document.getElementById('userPoints');
-            const currentPoints = parseInt(userPointsElement.textContent);
-            userPointsElement.textContent = currentPoints - totalPoints;
-            
-            // Clear cart
-            cart = [];
-            localStorage.setItem("voucherCart", JSON.stringify(cart));
-            
-            // Hide confirmation modal and show success modal
-            confirmationModal.style.display = 'none';
-            successModal.style.display = 'flex';
+            // Use the pointsManager to deduct points
+            if (typeof pointsManager !== 'undefined') {
+                const result = await pointsManager.deductPoints(totalPoints);
+                
+                if (result.success) {
+                    // Clear cart - IMPORTANT: Do this BEFORE showing the success modal
+                    cart = [];
+                    localStorage.setItem("voucherCart", JSON.stringify(cart));
+                    
+                    // Update cart count in the header
+                    updateCartCount();
+                    
+                    // Hide confirmation modal and show success modal
+                    confirmationModal.style.display = 'none';
+                    successModal.style.display = 'flex';
+                } else {
+                    showNotification(result.message || 'Failed to deduct points. Please try again.', 'error');
+                }
+            } else {
+                // Fallback if pointsManager is not available
+                console.error('Points manager not available');
+                
+                // For this demo, we'll just simulate the process
+                const userPointsElement = document.getElementById('userPoints');
+                if (userPointsElement) {
+                    const currentPoints = parseInt(userPointsElement.textContent);
+                    userPointsElement.textContent = currentPoints - totalPoints;
+                }
+                
+                // Clear cart - IMPORTANT: Do this BEFORE showing the success modal
+                cart = [];
+                localStorage.setItem("voucherCart", JSON.stringify(cart));
+                
+                // Update cart count in the header
+                updateCartCount();
+                
+                // Hide confirmation modal and show success modal
+                confirmationModal.style.display = 'none';
+                successModal.style.display = 'flex';
+            }
         });
         
         closeSuccessBtn.addEventListener('click', () => {
             successModal.style.display = 'none';
-            displayCart();
+            
+            // Make sure the cart is empty
+            cart = [];
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            
+            // Refresh the page to show empty cart
+            window.location.reload();
         });
         
         // Close modals when clicking outside
@@ -859,11 +888,21 @@
         
         // Initialize the cart display
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize points manager if available
+            if (window.pointsManager) {
+                window.pointsManager.init();
+            }
+            
             // Wait for the header to be loaded
             const headerInterval = setInterval(() => {
                 if (document.getElementById('userPoints')) {
                     clearInterval(headerInterval);
                     fetchCartItemDetails();
+                    
+                    // Fetch points after header is loaded
+                    if (window.pointsManager) {
+                        window.pointsManager.fetchPoints();
+                    }
                 }
             }, 100);
             
@@ -874,6 +913,8 @@
             }, 3000);
         });
     </script>
+    <script src="/js/points-manager.js"></script>
     <script src="/js/include-header.js"></script>
+    <script src="/js/dropdown-menu.js"></script>
 </body>
 </html>

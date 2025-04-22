@@ -79,7 +79,7 @@ const User = mongoose.model("User", userSchema)
 // Register a new user
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, phone, password } = req.body
+    const { username, email, phone, password, points } = req.body
 
     // Check if username or email already exists
     const existingUser = await User.findOne({
@@ -90,13 +90,13 @@ router.post("/register", async (req, res) => {
       return res.status(400).send("Username or Email already exists")
     }
 
-    // Create new user
+    // Create new user with points (default to 500 if not provided)
     const newUser = new User({
       username,
       email,
       phone,
       password,
-      points: 500, // Initial points for new users
+      points: points || 500, // Use provided points or default to 500
     })
 
     await newUser.save()
@@ -149,7 +149,7 @@ router.post("/signin", async (req, res) => {
 // Google authentication callback
 router.post("/auth/google/callback", async (req, res) => {
   try {
-    const { token } = req.body
+    const { token, points } = req.body
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -169,15 +169,9 @@ router.post("/auth/google/callback", async (req, res) => {
         googleId,
         password: Math.random().toString(36).slice(-8), // Random password
         phone: "", // Empty phone for Google auth users
-        points: 500, // Initial points
+        points: points || 500, // Use provided points or default to 500
       })
       await user.save()
-    } else {
-      // Update googleId if user exists but doesn't have googleId
-      if (!user.googleId) {
-        user.googleId = googleId
-        await user.save()
-      }
     }
 
     // Create JWT token

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Points API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background-color: #4a0082;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background-color: #6a1b9a;
+        }
+        .result {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Points API Test</h1>
+    <p>This page tests the Points API directly without using the points-manager.js file.</p>
+    
+    <div class="card">
+        <h2>Get Points</h2>
+        <button id="getPointsBtn" class="btn">Get Points</button>
+        <div id="getPointsResult" class="result">Results will appear here...</div>
+    </div>
+    
+    <div class="card">
+        <h2>Update Points</h2>
+        <input type="number" id="pointsAmount" value="100" min="1">
+        <button id="addPointsBtn" class="btn">Add Points</button>
+        <button id="deductPointsBtn" class="btn">Deduct Points</button>
+        <button id="setPointsBtn" class="btn">Set Points</button>
+        <div id="updatePointsResult" class="result">Results will appear here...</div>
+    </div>
+    
+    <div class="card">
+        <h2>Debug Information</h2>
+        <button id="getUserBtn" class="btn">Get User Info</button>
+        <button id="checkCookiesBtn" class="btn">Check Cookies</button>
+        <div id="debugResult" class="result">Results will appear here...</div>
+    </div>
+    
+    <script>
+        // Helper function to make API requests
+        async function makeApiRequest(url, method = 'GET', body = null) {
+            try {
+                const options = {
+                    method,
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                };
+                
+                if (body) {
+                    options.headers['Content-Type'] = 'application/json';
+                    options.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(url, options);
+                
+                // Get response as text first
+                const responseText = await response.text();
+                
+                // Try to parse as JSON
+                let responseData;
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (e) {
+                    // If not valid JSON, return the text
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        statusText: response.statusText,
+                        data: responseText,
+                        isJson: false
+                    };
+                }
+                
+                return {
+                    ok: response.ok,
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: responseData,
+                    isJson: true
+                };
+            } catch (error) {
+                return {
+                    ok: false,
+                    error: error.message
+                };
+            }
+        }
+        
+        // Format response for display
+        function formatResponse(response) {
+            if (response.error) {
+                return `Error: ${response.error}`;
+            }
+            
+            let result = `Status: ${response.status} ${response.statusText}\n`;
+            
+            if (response.isJson) {
+                result += `\nResponse Data:\n${JSON.stringify(response.data, null, 2)}`;
+            } else {
+                result += `\nResponse Text:\n${response.data}`;
+            }
+            
+            return result;
+        }
+        
+        // Get Points
+        document.getElementById('getPointsBtn').addEventListener('click', async () => {
+            const resultElement = document.getElementById('getPointsResult');
+            resultElement.textContent = 'Loading...';
+            resultElement.className = 'result';
+            
+            const response = await makeApiRequest('/api/points');
+            resultElement.textContent = formatResponse(response);
+            
+            if (!response.ok) {
+                resultElement.classList.add('error');
+            } else if (response.data && response.data.points !== undefined) {
+                resultElement.classList.add('success');
+            }
+        });
+        
+        // Add Points
+        document.getElementById('addPointsBtn').addEventListener('click', async () => {
+            const pointsAmount = parseInt(document.getElementById('pointsAmount').value);
+            if (isNaN(pointsAmount) || pointsAmount <= 0) {
+                alert('Please enter a valid positive number');
+                return;
+            }
+            
+            const resultElement = document.getElementById('updatePointsResult');
+            resultElement.textContent = 'Loading...';
+            resultElement.className = 'result';
+            
+            const response = await makeApiRequest('/api/points/update', 'POST', {
+                points: pointsAmount,
+                operation: 'add'
+            });
+            
+            resultElement.textContent = formatResponse(response);
+            
+            if (!response.ok) {
+                resultElement.classList.add('error');
+            } else if (response.data && response.data.success) {
+                resultElement.classList.add('success');
+            }
+        });
+        
+        // Deduct Points
+        document.getElementById('deductPointsBtn').addEventListener('click', async () => {
+            const pointsAmount = parseInt(document.getElementById('pointsAmount').value);
+            if (isNaN(pointsAmount) || pointsAmount <= 0) {
+                alert('Please enter a valid positive number');
+                return;
+            }
+            
+            const resultElement = document.getElementById('updatePointsResult');
+            resultElement.textContent = 'Loading...';
+            resultElement.className = 'result';
+            
+            const response = await makeApiRequest('/api/points/update', 'POST', {
+                points: pointsAmount,
+                operation: 'deduct'
+            });
+            
+            resultElement.textContent = formatResponse(response);
+            
+            if (!response.ok) {
+                resultElement.classList.add('error');
+            } else if (response.data && response.data.success) {
+                resultElement.classList.add('success');
+            }
+        });
+        
+        // Set Points
+        document.getElementById('setPointsBtn').addEventListener('click', async () => {
+            const pointsAmount = parseInt(document.getElementById('pointsAmount').value);
+            if (isNaN(pointsAmount) || pointsAmount < 0) {
+                alert('Please enter a valid non-negative number');
+                return;
+            }
+            
+            const resultElement = document.getElementById('updatePointsResult');
+            resultElement.textContent = 'Loading...';
+            resultElement.className = 'result';
+            
+            const response = await makeApiRequest('/api/points/force-update', 'POST', {
+                points: pointsAmount
+            });
+            
+            resultElement.textContent = formatResponse(response);
+            
+            if (!response.ok) {
+                resultElement.classList.add('error');
+            } else if (response.data && response.data.success) {
+                resultElement.classList.add('success');
+            }
+        });
+        
+        // Get User Info
+        document.getElementById('getUserBtn').addEventListener('click', async () => {
+            const resultElement = document.getElementById('debugResult');
+            resultElement.textContent = 'Loading...';
+            resultElement.className = 'result';
+            
+            const response = await makeApiRequest('/api/points/debug');
+            resultElement.textContent = formatResponse(response);
+            
+            if (!response.ok) {
+                resultElement.classList.add('error');
+            } else {
+                resultElement.classList.add('success');
+            }
+        });
+        
+        // Check Cookies
+        document.getElementById('checkCookiesBtn').addEventListener('click', () => {
+            const resultElement = document.getElementById('debugResult');
+            resultElement.className = 'result';
+            
+            const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+                const [key, value] = cookie.trim().split('=');
+                acc[key] = value;
+                return acc;
+            }, {});
+            
+            resultElement.textContent = `Cookies:\n${JSON.stringify(cookies, null, 2)}`;
+            
+            if (cookies.token) {
+                resultElement.classList.add('success');
+            } else {
+                resultElement.classList.add('error');
+                resultElement.textContent += '\n\nNo token cookie found! You need to be logged in.';
+            }
+        });
+    </script>
+</body>
+</html>

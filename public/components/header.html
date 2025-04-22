@@ -1,7 +1,7 @@
 <header class="header">
     <div class="header-container">
         <div class="logo">
-            <!-- <img src="/image/optima-bank_logo.png" alt="Optima Bank"> -->
+            <img src="/images/optima-logo.svg" alt="Optima Bank">
             <div class="logo-text">Optima <span>Rewards</span></div>
         </div>
         
@@ -15,7 +15,7 @@
         <div class="user-actions">
             <div class="points-badge">
                 <i class="fas fa-coins"></i>
-                <span id="userPoints">600</span> Points
+                <span id="userPoints" data-points-display>0</span> Points
             </div>
             
             <button class="icon-button" id="notificationsBtn">
@@ -27,9 +27,63 @@
                 <span class="badge" id="cartCount">0</span>
             </button>
             
-            <button class="icon-button" id="userMenuBtn">
-                <i class="fas fa-user-circle"></i>
-            </button>
-        </div>
+            <div class="user-dropdown">
+                <button class="icon-button" id="userMenuBtn">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <div class="dropdown-menu" id="userDropdown">
+                    <a href="/profile.html" class="dropdown-item">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                    <a href="/signin.html" class="dropdown-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Log Out
+                    </a>
+                </div>
+            </div>
+        </div>        
     </div>
 </header>
+
+<style>
+    /* User dropdown styles */
+    .user-dropdown {
+        position: relative;
+    }
+    
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        width: 180px;
+        z-index: 1000;
+        display: none;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+    
+    .dropdown-menu.show {
+        display: block !important;
+    }
+    
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+    
+    .dropdown-item:hover {
+        background-color: var(--gray-100);
+    }
+    
+    .dropdown-item i {
+        margin-right: 0.75rem;
+        color: var(--secondary);
+        width: 16px;
+    }
+</style>

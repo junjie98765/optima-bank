@@ -2,6 +2,7 @@ const express = require("express")
 const dotenv = require("dotenv")
 const connectDB = require("./config/db")
 const path = require("path")
+const cors = require('cors');  // If frontend is on a different port
 
 // Load environment variables
 dotenv.config()
@@ -11,6 +12,7 @@ const app = express()
 
 // Middleware
 app.use(express.json())
+app.use(cors());
 app.use(express.urlencoded({ extended: false }))
 
 // Serve static files
