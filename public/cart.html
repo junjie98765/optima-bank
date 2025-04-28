@@ -768,6 +768,7 @@ function ensurePointsManager() {
             confirmationModal.style.display = 'none';
         });
         
+<<<<<<< HEAD
         confirmCheckoutBtn.addEventListener('click', async function() {
             // Disable the button to prevent multiple clicks
             this.disabled = true;
@@ -812,17 +813,34 @@ function ensurePointsManager() {
                 this.disabled = false;
                 this.innerHTML = 'Confirm';
             }
+=======
+        confirmCheckoutBtn.addEventListener('click', () => {
+            // Calculate total points
+            const totalPoints = cart.reduce((total, item) => total + (item.points * item.quantity), 0);
+            
+            // In a real application, you would:
+            // 1. Make an API call to process the redemption
+            // 2. Update the user's point balance
+            // 3. Generate and deliver the voucher(s)
+            
+            // For this demo, we'll just simulate the process
+            const userPointsElement = document.getElementById('userPoints');
+            const currentPoints = parseInt(userPointsElement.textContent);
+            userPointsElement.textContent = currentPoints - totalPoints;
+            
+            // Clear cart
+            cart = [];
+            localStorage.setItem("voucherCart", JSON.stringify(cart));
+            
+            // Hide confirmation modal and show success modal
+            confirmationModal.style.display = 'none';
+            successModal.style.display = 'flex';
+>>>>>>> parent of 86de5066 (work2)
         });
         
         closeSuccessBtn.addEventListener('click', () => {
             successModal.style.display = 'none';
-            
-            // Make sure the cart is empty
-            cart = [];
-            localStorage.setItem("voucherCart", JSON.stringify(cart));
-            
-            // Refresh the page to show empty cart
-            window.location.reload();
+            displayCart();
         });
         
         // Close modals when clicking outside
@@ -903,6 +921,7 @@ function ensurePointsManager() {
         
         // Initialize the cart display
         document.addEventListener('DOMContentLoaded', function() {
+<<<<<<< HEAD
             console.log("DOM loaded, initializing cart...");
             
             // Load cart from localStorage first
@@ -919,15 +938,21 @@ function ensurePointsManager() {
                 window.pointsManager.init();
             }
             
+=======
+>>>>>>> parent of 86de5066 (work2)
             // Wait for the header to be loaded
             const headerInterval = setInterval(() => {
                 if (document.getElementById('userPoints')) {
                     clearInterval(headerInterval);
+<<<<<<< HEAD
                     
                     // Fetch points after header is loaded
                     if (window.pointsManager) {
                         window.pointsManager.fetchPoints();
                     }
+=======
+                    fetchCartItemDetails();
+>>>>>>> parent of 86de5066 (work2)
                 }
             }, 100);
             
@@ -937,10 +962,12 @@ function ensurePointsManager() {
             }, 3000);
         });
     </script>
-    <script src="/js/points-manager.js"></script>
     <script src="/js/include-header.js"></script>
+<<<<<<< HEAD
     <script src="/js/dropdown-menu.js"></script>
     <script src="/js/direct-points-loader.js"></script>
     <script src="/js/cart-fix.js"></script>
+=======
+>>>>>>> parent of 86de5066 (work2)
 </body>
 </html>

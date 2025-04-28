@@ -292,19 +292,19 @@
   
   <!-- Confirmation Modal -->
   <div class="modal" id="confirmationModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">Confirm Redemption</h3>
-        </div>
-        <div class="modal-body">
-            <p>Are you sure you want to redeem <span id="confirmQuantity">1</span> <span id="confirmName">Voucher</span> for <span id="confirmPoints">0</span> points?</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" id="cancelRedemptionBtn">Cancel</button>
-            <button class="btn btn-primary" id="confirmRedemptionBtn">Confirm</button>
-        </div>
-    </div>
-</div>
+      <div class="modal-content">
+          <div class="modal-header">
+              <h3 class="modal-title">Confirm Redemption</h3>
+          </div>
+          <div class="modal-body">
+              <p>Are you sure you want to redeem <span id="confirmQuantity">1</span> <span id="confirmName">Voucher</span> for <span id="confirmPoints">0</span> points?</p>
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-outline" id="cancelRedemptionBtn">Cancel</button>
+              <button class="btn btn-primary" id="confirmRedemptionBtn">Confirm</button>
+          </div>
+      </div>
+  </div>
   
   <!-- Success Modal -->
   <div class="modal" id="successModal">
@@ -597,59 +597,36 @@
           }
           
           if (confirmRedemptionBtn && confirmationModal) {
-              confirmRedemptionBtn.addEventListener('click', async () => {
+              confirmRedemptionBtn.addEventListener('click', () => {
                   const quantity = parseInt(quantityInput.value) || 1;
                   const totalPoints = quantity * voucher.points;
                   
-                  // Use the pointsManager to deduct points
-                  if (typeof pointsManager !== 'undefined') {
-                      const result = await pointsManager.deductPoints(totalPoints);
-                      
-                      if (result.success) {
-                          // Hide confirmation modal and show success modal
-                          confirmationModal.style.display = 'none';
-                          
-                          const successQuantityElement = document.getElementById('successQuantity');
-                          const successNameElement = document.getElementById('successName');
-                          const successModal = document.getElementById('successModal');
-                          
-                          if (successQuantityElement && successNameElement && successModal) {
-                              successQuantityElement.textContent = quantity;
-                              successNameElement.textContent = voucher.name;
-                              successModal.style.display = 'flex';
-                          } else {
-                              console.error('One or more success modal elements not found');
-                              showNotification('Redemption successful!', 'success');
-                          }
-                      } else {
-                          showNotification(result.message || 'Failed to deduct points. Please try again.', 'error');
-                      }
+                  // In a real application, you would:
+                  // 1. Make an API call to process the redemption
+                  // 2. Update the user's point balance
+                  // 3. Generate and deliver the voucher(s)
+                  
+                  // For this demo, we'll just simulate the process
+                  const userPointsElement = document.getElementById('userPoints');
+                  if (userPointsElement) {
+                      const currentPoints = parseInt(userPointsElement.textContent);
+                      userPointsElement.textContent = currentPoints - totalPoints;
+                  }
+                  
+                  // Hide confirmation modal and show success modal
+                  confirmationModal.style.display = 'none';
+                  
+                  const successQuantityElement = document.getElementById('successQuantity');
+                  const successNameElement = document.getElementById('successName');
+                  const successModal = document.getElementById('successModal');
+                  
+                  if (successQuantityElement && successNameElement && successModal) {
+                      successQuantityElement.textContent = quantity;
+                      successNameElement.textContent = voucher.name;
+                      successModal.style.display = 'flex';
                   } else {
-                      // Fallback if pointsManager is not available
-                      console.error('Points manager not available');
-                      
-                      // For this demo, we'll just simulate the process
-                      const userPointsElement = document.getElementById('userPoints');
-                      if (userPointsElement) {
-                          const currentPoints = parseInt(userPointsElement.textContent);
-                          userPointsElement.textContent = currentPoints - totalPoints;
-                      }
-                      
-                      // Hide confirmation modal and show success modal
-                      confirmationModal.style.display = 'none';
-                      
-                      const successQuantityElement = document.getElementById('successQuantity');
-                      const successNameElement = document.getElementById('successName');
-                      const successModal = document.getElementById('successModal');
-                      
-                      if (successQuantityElement && successNameElement && successModal) {
-                          successQuantityElement.textContent = quantity;
-                          successNameElement.textContent = voucher.name;
-                          successModal.style.display = 'flex';
-                      } else {
-                          console.error('One or more success modal elements not found');
-                          showNotification('Redemption successful!', 'success');
-                      }
+                      console.error('One or more success modal elements not found');
+                      showNotification('Redemption successful!', 'success');
                   }
               });
           }
@@ -797,6 +774,9 @@
       });
   </script>
   <script src="/js/include-header.js"></script>
+<<<<<<< HEAD
   <script src="/js/direct-points-loader.js"></script>
+=======
+>>>>>>> parent of 86de5066 (work2)
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Optima Bank - Rewards Marketplace</title>
+
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -336,33 +337,6 @@
             transform: translateX(20px);
         }
         
-        /* Terms & Conditions link */
-        .terms-link {
-            font-size: 0.75rem;
-            color: var(--primary);
-            text-decoration: underline;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            display: inline-block;
-        }
-        
-        .terms-link:hover {
-            color: var(--secondary);
-        }
-        
-        /* Terms & Conditions modal */
-        .terms-modal-content {
-            max-width: 600px;
-        }
-        
-        .terms-content {
-            font-size: 0.875rem;
-            color: var(--text-light);
-            line-height: 1.6;
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-        
         /* Responsive */
         @media (max-width: 768px) {
             .hero-title {
@@ -425,12 +399,12 @@
             <p>Keep earning points to unlock premium rewards and exclusive offers.</p>
             
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 0%;"></div>
+                <div class="progress-fill" style="width: 60%;"></div>
             </div>
             
             <div class="progress-labels">
                 <span>0 points</span>
-                <span data-points-display>0</span>
+                <span>600 points</span>
                 <span>1,000 points</span>
             </div>
         </div>
@@ -486,24 +460,6 @@
         </div>
     </div>
     
-    <!-- Terms & Conditions Modal -->
-    <div class="modal" id="termsModal">
-        <div class="modal-content terms-modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Terms & Conditions</h3>
-                <button class="modal-close" id="closeTermsModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="terms-content" id="termsContent">
-                    <!-- Terms content will be loaded here dynamically -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="closeTermsBtn">Close</button>
-            </div>
-        </div>
-    </div>
-    
     <script>
         // Initialize cart from localStorage
         let cart = JSON.parse(localStorage.getItem("voucherCart")) || [];
@@ -542,6 +498,7 @@
                 `;
             }
         }
+<<<<<<< HEAD
 
 // Replace the fetchUserPoints function with this updated version
 async function fetchUserPoints() {
@@ -608,6 +565,8 @@ async function fetchUserPoints() {
 }
 
 // Remove the useHardcodedPoints function as we don't want to fall back to hardcoded values
+=======
+>>>>>>> parent of 86de5066 (work2)
         
         // Display vouchers based on current page and filters
         function displayVouchers(category = 'all', searchTerm = '') {
@@ -672,7 +631,6 @@ async function fetchUserPoints() {
                     </div>
                     <div class="voucher-body">
                         <p class="voucher-description">${voucher.description}</p>
-                        <p class="terms-link" data-id="${voucher._id}">View Terms & Conditions</p>
                         
                         <div class="quantity-control">
                             <button class="quantity-btn decrease-btn">
@@ -885,34 +843,6 @@ async function fetchUserPoints() {
                     } catch (error) {
                         console.error('Error redeeming voucher:', error);
                         showNotification('Failed to redeem voucher. Please try again.', 'error');
-                    }
-                });
-            });
-            
-            // Terms & Conditions functionality
-            document.querySelectorAll('.terms-link').forEach(link => {
-                link.addEventListener('click', async function() {
-                    const voucherId = this.dataset.id;
-                    
-                    try {
-                        // Fetch voucher details from API
-                        const response = await fetch(`/api/vouchers/${voucherId}`);
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch voucher details');
-                        }
-                        
-                        const voucher = await response.json();
-                        
-                        // Set terms content in modal
-                        const termsContent = document.getElementById('termsContent');
-                        termsContent.innerHTML = voucher.terms || 'No terms and conditions available for this voucher.';
-                        
-                        // Show terms modal
-                        const termsModal = document.getElementById('termsModal');
-                        termsModal.style.display = 'flex';
-                    } catch (error) {
-                        console.error('Error fetching terms and conditions:', error);
-                        showNotification('Failed to load terms and conditions. Please try again.', 'error');
                     }
                 });
             });
@@ -1217,25 +1147,6 @@ async function fetchUserPoints() {
             }
         });
         
-        // Terms & Conditions modal functionality
-        const termsModal = document.getElementById('termsModal');
-        const closeTermsModal = document.getElementById('closeTermsModal');
-        const closeTermsBtn = document.getElementById('closeTermsBtn');
-        
-        closeTermsModal.addEventListener('click', function() {
-            termsModal.style.display = 'none';
-        });
-        
-        closeTermsBtn.addEventListener('click', function() {
-            termsModal.style.display = 'none';
-        });
-        
-        window.addEventListener('click', function(event) {
-            if (event.target === termsModal) {
-                termsModal.style.display = 'none';
-            }
-        });
-        
         // FIXED: Clear cart button
         clearCartBtn.addEventListener('click', function() {
             if (cart.length === 0) {
@@ -1352,6 +1263,7 @@ async function fetchUserPoints() {
         
         // Initialize the page
         fetchVouchers();
+<<<<<<< HEAD
         fetchUserPoints();  // <- Add this
 
 // Add refresh points button functionality
@@ -1394,5 +1306,9 @@ document.getElementById('refreshPointsBtn')?.addEventListener('click', function(
     <script src="/js/dropdown-menu.js"></script>
     <!-- Add this script tag right before the closing body tag -->
     <script src="/js/direct-points-loader.js"></script>
+=======
+    </script>
+    <script src="/js/include-header.js"></script>
+>>>>>>> parent of 86de5066 (work2)
 </body>
 </html>

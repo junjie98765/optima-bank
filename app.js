@@ -16,7 +16,10 @@ const jwt = require("jsonwebtoken")
 // Import routes
 const voucherRoutes = require("./routes/vouchers")
 const authRoutes = require("./routes/auth")
+<<<<<<< HEAD
 const pointsRoutes = require("./routes/points")
+=======
+>>>>>>> parent of 86de5066 (work2)
 
 // Initialize Express
 const app = express()
@@ -127,7 +130,10 @@ db.once("open", async () => {
 // Use routes
 app.use("/api/vouchers", voucherRoutes)
 app.use("/", authRoutes)
+<<<<<<< HEAD
 app.use("/api/points", pointsRoutes)
+=======
+>>>>>>> parent of 86de5066 (work2)
 
 // --- 🛒 Cart API routes ---
 
