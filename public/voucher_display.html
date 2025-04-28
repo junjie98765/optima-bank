@@ -416,7 +416,12 @@
     <div class="container">
         <!-- Points Progress -->
         <div class="points-progress-container">
-            <h2 class="points-progress-title">Your Rewards Journey</h2>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="points-progress-title">Your Rewards Journey</h2>
+                <button id="refreshPointsBtn" class="btn btn-sm btn-outline" title="Refresh points">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
             <p>Keep earning points to unlock premium rewards and exclusive offers.</p>
             
             <div class="progress-bar">
@@ -538,38 +543,71 @@
             }
         }
 
-        async function fetchUserPoints() {
+// Replace the fetchUserPoints function with this updated version
+async function fetchUserPoints() {
     try {
         // Use the points manager to fetch points
         if (window.pointsManager) {
-            await window.pointsManager.fetchPoints();
+            try {
+                await window.pointsManager.refreshPoints();
+                console.log("Points loaded successfully via points manager");
+            } catch (error) {
+                console.error("Error using points manager:", error);
+                // Show error in UI
+                document.querySelectorAll('[data-points-display], #userPoints').forEach(el => {
+                    el.style.color = "#ff5555";
+                    el.title = "Error loading points. Click refresh to try again.";
+                });
+            }
         } else {
-            // Fallback to direct API call if points manager is not available
-            const response = await fetch('/api/user/points', {
-                credentials: 'include' // Include cookies for authentication
-            });
-            if (!response.ok) throw new Error("Failed to fetch user points");
-
-            const data = await response.json();
-            const points = data.points || 0;
-
-            // Update all elements displaying points
-            document.querySelectorAll('[data-points-display]').forEach(el => {
-                el.textContent = points;
-            });
-
-            // Update progress bar fill (assuming 1000 is the max points)
-            const progressFill = document.querySelector('.progress-fill');
-            if (progressFill) {
-                const percent = Math.min((points / 1000) * 100, 100);
-                progressFill.style.width = `${percent}%`;
+            console.error("Points manager not available");
+            // Try direct fetch as fallback
+            try {
+                const response = await fetch('/api/points');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch points from API');
+                }
+                
+                const data = await response.json();
+                
+                // Update all elements displaying points
+                document.querySelectorAll('[data-points-display]').forEach(el => {
+                    el.textContent = data.points.toLocaleString();
+                });
+                
+                // Also update elements with ID 'userPoints'
+                document.querySelectorAll('#userPoints').forEach(el => {
+                    el.textContent = data.points.toLocaleString();
+                });
+                
+                // Update progress bar fill
+                const progressFill = document.querySelector('.progress-fill');
+                if (progressFill) {
+                    const percent = Math.min((data.points / 1000) * 100, 100);
+                    progressFill.style.width = `${percent}%`;
+                }
+                
+                console.log('Points loaded successfully via direct fetch');
+            } catch (error) {
+                console.error("Error with direct fetch:", error);
+                // Show error in UI
+                document.querySelectorAll('[data-points-display], #userPoints').forEach(el => {
+                    el.style.color = "#ff5555";
+                    el.title = "Error loading points. Click refresh to try again.";
+                });
             }
         }
     } catch (error) {
         console.error("Error loading user points:", error);
+        // Show error in UI
+        document.querySelectorAll('[data-points-display], #userPoints').forEach(el => {
+            el.style.color = "#ff5555";
+            el.title = "Error loading points. Click refresh to try again.";
+        });
     }
 }
 
+// Remove the useHardcodedPoints function as we don't want to fall back to hardcoded values
         
         // Display vouchers based on current page and filters
         function displayVouchers(category = 'all', searchTerm = '') {
@@ -932,6 +970,7 @@
             
             cart.forEach((item, index) => {
                 const itemTotal = item.points * item.quantity;
+                
                 totalPoints += itemTotal;
                 
                 cartHTML += `
@@ -1314,9 +1353,45 @@
         fetchVouchers();
         fetchUserPoints();  // <- Add this
 
+// Add refresh points button functionality
+document.getElementById('refreshPointsBtn')?.addEventListener('click', function() {
+    this.disabled = true;
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    if (window.pointsManager) {
+        window.pointsManager.refreshPoints()
+            .then(() => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                showNotification('Points refreshed successfully', 'success');
+            })
+            .catch(error => {
+                console.error('Error refreshing points:', error);
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                showNotification('Failed to refresh points', 'error');
+            });
+    } else {
+        fetchUserPoints()
+            .then(() => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                showNotification('Points refreshed successfully', 'success');
+            })
+            .catch(error => {
+                console.error('Error refreshing points:', error);
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                showNotification('Failed to refresh points', 'error');
+            });
+    }
+});
+
     </script>
     <script src="/js/include-header.js"></script>
     <script src="/js/points-manager.js"></script>
     <script src="/js/dropdown-menu.js"></script>
+    <!-- Add this script tag right before the closing body tag -->
+    <script src="/js/direct-points-loader.js"></script>
 </body>
 </html>
