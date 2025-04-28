@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #4a0082;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #5c0099;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .success {
+            border-left: 4px solid #10b981;
+        }
+        .error {
+            border-left: 4px solid #ef4444;
+        }
+        .log-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .log-entry {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+        .log-info {
+            color: #0066cc;
+        }
+        .log-error {
+            color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cart Test</h1>
+    
+    <div class="card">
+        <h2>Test Cart Operations</h2>
+        <div>
+            <button id="addItemBtn">Add Test Item</button>
+            <button id="viewCartBtn">View Cart</button>
+            <button id="clearCartBtn">Clear Cart</button>
+            <button id="checkDbBtn">Check Database</button>
+        </div>
+        <div id="result" style="margin-top: 20px;"></div>
+        
+        <div class="log-container">
+            <h3>Console Log</h3>
+            <div id="logOutput"></div>
+        </div>
+    </div>
+    
+    <script src="/js/cart-manager.js"></script>
+    <script>
+        // Override console.log to display in the UI
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = function() {
+            // Call the original console.log
+            originalLog.apply(console, arguments);
+            
+            // Add to the log container
+            const logOutput = document.getElementById('logOutput');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry log-info';
+            logEntry.textContent = Array.from(arguments).join(' ');
+            logOutput.appendChild(logEntry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        };
+        
+        console.error = function() {
+            // Call the original console.error
+            originalError.apply(console, arguments);
+            
+            // Add to the log container
+            const logOutput = document.getElementById('logOutput');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry log-error';
+            logEntry.textContent = 'ERROR: ' + Array.from(arguments).join(' ');
+            logOutput.appendChild(logEntry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        };
+        
+        // Function to show notifications
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        document.getElementById('addItemBtn').addEventListener('click', async function() {
+            const testItem = {
+                id: 'test-voucher-' + Date.now(),
+                name: 'Test Voucher',
+                points: 100,
+                quantity: 1,
+                description: 'Test description',
+                validity: '2023-12-31'
+            };
+            
+            try {
+                await window.cartManager.addItem(testItem);
+                document.getElementById('result').innerHTML = '<p>Item added to cart!</p>';
+                showNotification('Item added to cart!', 'success');
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+                showNotification(`Error: ${error.message}`, 'error');
+            }
+        });
+        
+        document.getElementById('viewCartBtn').addEventListener('click', function() {
+            const cart = window.cartManager.getCart();
+            document.getElementById('result').innerHTML = `
+                <p>Cart contents (${cart.length} items):</p>
+                <pre>${JSON.stringify(cart, null, 2)}</pre>
+            `;
+        });
+        
+        document.getElementById('clearCartBtn').addEventListener('click', async function() {
+            try {
+                await window.cartManager.clearCart();
+                document.getElementById('result').innerHTML = '<p>Cart cleared!</p>';
+                showNotification('Cart cleared!', 'success');
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+                showNotification(`Error: ${error.message}`, 'error');
+            }
+        });
+        
+        document.getElementById('checkDbBtn').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/cart');
+                const data = await response.json();
+                
+                document.getElementById('result').innerHTML = `
+                    <p>Database cart contents:</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+                showNotification('Database checked!', 'success');
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Error checking database: ${error.message}</p>`;
+                showNotification(`Error: ${error.message}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

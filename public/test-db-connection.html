@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        button {
+            background-color: #4a0082;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #5c0099;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .result {
+            margin-top: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>MongoDB Connection Test</h1>
+    
+    <div class="card">
+        <h2>Connection Status</h2>
+        <button id="testConnectionBtn">Test Connection</button>
+        <div id="connectionResult" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Test Cart Save</h2>
+        <button id="testCartSaveBtn">Test Cart Save</button>
+        <div id="cartSaveResult" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Environment Variables</h2>
+        <p>Make sure you have set the MONGODB_URI environment variable correctly.</p>
+        <p>Current connection string (masked): <span id="connectionString">Checking...</span></p>
+    </div>
+    
+    <div class="card">
+        <h2>Troubleshooting</h2>
+        <ul>
+            <li>Make sure MongoDB is running and accessible</li>
+            <li>Check that your connection string is correct</li>
+            <li>Verify network connectivity between your server and MongoDB</li>
+            <li>Check MongoDB user permissions</li>
+        </ul>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test connection button
+            document.getElementById('testConnectionBtn').addEventListener('click', async function() {
+                const resultDiv = document.getElementById('connectionResult');
+                resultDiv.innerHTML = '<p>Testing connection...</p>';
+                
+                try {
+                    const response = await fetch('/api/db-status');
+                    const data = await response.json();
+                    
+                    if (data.connected) {
+                        resultDiv.innerHTML = `
+                            <p class="success">✅ Connection successful!</p>
+                            <p>${data.message}</p>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <p class="error">❌ Connection failed!</p>
+                            <p>Error: ${data.error}</p>
+                            ${data.stack ? `<pre>${data.stack}</pre>` : ''}
+                        `;
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML = `
+                        <p class="error">❌ Test failed!</p>
+                        <p>Error: ${error.message}</p>
+                    `;
+                }
+            });
+            
+            // Test cart save button
+            document.getElementById('testCartSaveBtn').addEventListener('click', async function() {
+                const resultDiv = document.getElementById('cartSaveResult');
+                resultDiv.innerHTML = '<p>Testing cart save...</p>';
+                
+                try {
+                    const response = await fetch('/api/test-cart-save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        resultDiv.innerHTML = `
+                            <p class="success">✅ Cart save successful!</p>
+                            <p>${data.message}</p>
+                            <p>Inserted ID: ${data.insertedId}</p>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <p class="error">❌ Cart save failed!</p>
+                            <p>Error: ${data.error}</p>
+                            ${data.stack ? `<pre>${data.stack}</pre>` : ''}
+                        `;
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML = `
+                        <p class="error">❌ Test failed!</p>
+                        <p>Error: ${error.message}</p>
+                    `;
+                }
+            });
+            
+            // Check connection string
+            async function checkConnectionString() {
+                try {
+                    const response = await fetch('/api/db-status');
+                    const data = await response.json();
+                    
+                    // Just show if we have a connection string, not the actual string for security
+                    if (data.connectionStringProvided) {
+                        document.getElementById('connectionString').textContent = 'Connection string is set (masked for security)';
+                    } else {
+                        document.getElementById('connectionString').textContent = 'No connection string found! Please set MONGODB_URI environment variable.';
+                        document.getElementById('connectionString').className = 'error';
+                    }
+                } catch (error) {
+                    document.getElementById('connectionString').textContent = 'Error checking connection string: ' + error.message;
+                    document.getElementById('connectionString').className = 'error';
+                }
+            }
+            
+            // Run connection test on page load
+            document.getElementById('testConnectionBtn').click();
+            checkConnectionString();
+        });
+    </script>
+</body>
+</html>

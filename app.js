@@ -8,7 +8,6 @@ const crypto = require("crypto")
 const nodemailer = require("nodemailer")
 const path = require("path")
 const passport = require("passport")
-// Comment out or remove the GoogleStrategy line if you're not using it yet
 const GoogleStrategy = require("passport-google-oauth20").Strategy
 require("dotenv").config()
 const cookieParser = require("cookie-parser")
@@ -17,7 +16,7 @@ const jwt = require("jsonwebtoken")
 // Import routes
 const voucherRoutes = require("./routes/vouchers")
 const authRoutes = require("./routes/auth")
-const pointsRoutes = require("./routes/points") // Add this line
+const pointsRoutes = require("./routes/points")
 
 // Initialize Express
 const app = express()
@@ -40,11 +39,9 @@ const authenticateUser = (req, res, next) => {
   const token = req.cookies.token
 
   if (!token) {
-    // For API routes, return 401
     if (req.path.startsWith("/api/")) {
       return res.status(401).json({ message: "Authentication required" })
     }
-    // For page routes, redirect to login
     return res.redirect("/signin.html")
   }
 
@@ -53,11 +50,9 @@ const authenticateUser = (req, res, next) => {
     req.user = decoded
     next()
   } catch (error) {
-    // For API routes, return 401
     if (req.path.startsWith("/api/")) {
       return res.status(401).json({ message: "Invalid token" })
     }
-    // For page routes, redirect to login
     res.clearCookie("token")
     return res.redirect("/signin.html")
   }
@@ -72,7 +67,7 @@ app.use((err, req, res, next) => {
   })
 })
 
-// Connect to MongoDB with more detailed error handling
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/registration", {
     useNewUrlParser: true,
@@ -93,27 +88,106 @@ const db = mongoose.connection
 db.on("error", (err) => {
   console.error("MongoDB connection error event:", err)
 })
-db.once("open", () => {
+
+db.once("open", async () => {
   console.log("MongoDB connection open event fired")
-  // List all collections in the database
+  
   db.db.listCollections().toArray((err, collections) => {
     if (err) {
       console.error("Error listing collections:", err)
     } else {
-      console.log(
-        "Available collections:",
-        collections.map((c) => c.name),
-      )
+      console.log("Available collections:", collections.map((c) => c.name))
     }
   })
+
+  // --------- 🛒 AUTO-ADD CART FIELD FOR OLD USERS ---------
+  const User = mongoose.model("User")
+
+  async function ensureCartFieldForExistingUsers() {
+    try {
+      const usersWithoutCart = await User.find({ cart: { $exists: false } })
+      console.log(`Found ${usersWithoutCart.length} users without cart.`)
+
+      for (const user of usersWithoutCart) {
+        user.cart = []
+        await user.save()
+        console.log(`Updated user ${user._id} with empty cart.`)
+      }
+
+      console.log("Finished updating old users.")
+    } catch (error) {
+      console.error("Error ensuring cart field:", error)
+    }
+  }
+
+  await ensureCartFieldForExistingUsers()
+  // --------- 🛒 END CART PATCH ---------
 })
 
 // Use routes
 app.use("/api/vouchers", voucherRoutes)
 app.use("/", authRoutes)
-app.use("/api/points", pointsRoutes) // Add this line
+app.use("/api/points", pointsRoutes)
 
-// Protected routes - require authentication
+// --- 🛒 Cart API routes ---
+
+// Load User model
+const User = mongoose.model("User");
+
+// Get cart for a user
+// Get cart for a user
+app.get("/api/cart/:userId", async (req, res) => {
+  try {
+      const user = await User.findById(req.params.userId);
+      if (!user) {
+          return res.status(404).json({ error: "User not found" });
+      }
+      res.json({ cart: user.cart || [] });
+  } catch (err) {
+      console.error("Error fetching cart:", err);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Save cart for a user
+app.post("/api/cart/:userId", async (req, res) => {
+  try {
+      const { cart } = req.body;
+      const user = await User.findByIdAndUpdate(req.params.userId, { cart: cart }, { new: true });
+
+      if (!user) {
+          return res.status(404).json({ error: "User not found" });
+      }
+
+      res.json({ message: "Cart updated successfully", cart: user.cart });
+  } catch (err) {
+      console.error("Error saving cart:", err);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Associate guest cart to user
+app.post("/api/cart/associate", async (req, res) => {
+  try {
+    const { guestUserId, userId } = req.body;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "Cart associated successfully", cart: user.cart });
+  } catch (err) {
+    console.error("Error associating cart:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Protected routes
 app.get("/voucher_display.html", authenticateUser, (req, res) => {
   res.sendFile(path.join(__dirname, "public/voucher_display.html"))
 })
@@ -126,7 +200,7 @@ app.get("/cart", authenticateUser, (req, res) => {
   res.sendFile(path.join(__dirname, "public/cart.html"))
 })
 
-// Add a test route to verify the server is running
+// Test route
 app.get("/api/test", (req, res) => {
   res.json({ message: "API is working!" })
 })
@@ -141,7 +215,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Import User model here to avoid circular dependencies
         const User = mongoose.model("User")
         const existingUser = await User.findOne({ email: profile.emails[0].value })
 
@@ -168,7 +241,7 @@ app.get("/redeem.html", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "redeem.html"))
 })
 
-// Admin routes for vouchers
+// Admin routes
 app.get("/admin/vouchers", async (req, res) => {
   try {
     const Voucher = mongoose.model("Voucher")
@@ -179,7 +252,6 @@ app.get("/admin/vouchers", async (req, res) => {
   }
 })
 
-// Admin route to update a voucher by ID
 app.put("/admin/vouchers/:id", async (req, res) => {
   const { id } = req.params
   const { name, description, points, category, validity, terms, iconClass, isActive } = req.body
@@ -202,7 +274,6 @@ app.put("/admin/vouchers/:id", async (req, res) => {
   }
 })
 
-// Admin route to delete a voucher by ID
 app.delete("/admin/vouchers/:id", async (req, res) => {
   const { id } = req.params
 
@@ -219,7 +290,7 @@ app.delete("/admin/vouchers/:id", async (req, res) => {
   }
 })
 
-// Start Server with better error handling
+// Start Server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
   console.log(`API available at http://localhost:${PORT}/api/vouchers`)

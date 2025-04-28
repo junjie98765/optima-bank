@@ -761,11 +761,6 @@
       
       // Initialize the page
       document.addEventListener('DOMContentLoaded', function() {
-          // Initialize points manager
-          if (window.pointsManager) {
-              window.pointsManager.init();
-          }
-          
           // Wait for the header to be loaded
           const headerInterval = setInterval(() => {
               if (document.getElementById('userPoints')) {
@@ -773,11 +768,6 @@
                   if (voucherId) {
                       console.log("Initializing redeem page with voucher ID:", voucherId);
                       fetchVoucherDetails();
-                      
-                      // Fetch points after header is loaded
-                      if (window.pointsManager) {
-                          window.pointsManager.fetchPoints();
-                      }
                   } else {
                       console.error("No voucher ID provided in URL");
                       const loaderContainer = document.getElementById('loaderContainer');
@@ -806,8 +796,7 @@
           }, 3000);
       });
   </script>
-  <script src="/js/points-manager.js"></script>
   <script src="/js/include-header.js"></script>
-  <script src="/js/dropdown-menu.js"></script>
+  <script src="/js/direct-points-loader.js"></script>
 </body>
 </html>
